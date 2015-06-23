@@ -81,11 +81,15 @@ func tocFromSpine(s spine, m manifest) []*toc {
 }
 
 func spineHandler(rw http.ResponseWriter, req *http.Request) {
+	if fs == nil {
+		indexHandler(rw, req)
+	}
+
 	buf, err := vfs.ReadFile(fs, req.URL.Path)
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Fprint(rw, string(buf))
+	rw.Write(buf)
 }
 
 func indexHandler(rw http.ResponseWriter, r *http.Request) {
