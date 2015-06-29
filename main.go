@@ -21,12 +21,7 @@ func uploadHandler(rw http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 
-	dir, err := ioutil.TempDir("c://wrk", "dir")
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	dst, err := ioutil.TempFile(dir, "file")
+	dst, err := ioutil.TempFile("files", "file")
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -59,30 +54,10 @@ func uploadHandler(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
-type toc struct {
-	Text string
-	Href string
-}
-
-func tocFromSpine(s spine, m manifest) []*toc {
-	t := make([]*toc, 0)
-	for _, si := range s.ItemRefs {
-		tt := &toc{}
-		for _, mi := range m.Items {
-			if si.Idref == mi.Id {
-				tt.Text = si.Idref
-				tt.Href = mi.Href
-				t = append(t, tt)
-				break
-			}
-		}
-	}
-	return t
-}
-
 func spineHandler(rw http.ResponseWriter, req *http.Request) {
 	if fs == nil {
 		indexHandler(rw, req)
+		return
 	}
 
 	buf, err := vfs.ReadFile(fs, req.URL.Path)
@@ -93,13 +68,14 @@ func spineHandler(rw http.ResponseWriter, req *http.Request) {
 }
 
 func indexHandler(rw http.ResponseWriter, r *http.Request) {
-	http.ServeFile(rw, r, "upload.html")
+	http.ServeFile(rw, r, "index.html")
 }
 
 func main() {
 	http.HandleFunc("/", spineHandler)
 	http.HandleFunc("/index", indexHandler)
-	http.HandleFunc("/upload", uploadHandler)
+	http.HandleFunc("/toc", uploadHandler)
 
 	http.ListenAndServe(":9090", nil)
+
 }

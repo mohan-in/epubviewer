@@ -35,3 +35,24 @@ type item struct {
 type itemRef struct {
 	Idref string `xml:"idref,attr"`
 }
+
+type toc struct {
+	Text string
+	Href string
+}
+
+func tocFromSpine(s spine, m manifest) []*toc {
+	t := make([]*toc, 0)
+	for _, si := range s.ItemRefs {
+		tt := &toc{}
+		for _, mi := range m.Items {
+			if si.Idref == mi.Id {
+				tt.Text = si.Idref
+				tt.Href = mi.Href
+				t = append(t, tt)
+				break
+			}
+		}
+	}
+	return t
+}
