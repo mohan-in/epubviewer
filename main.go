@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"golang.org/x/tools/godoc/vfs"
 	"golang.org/x/tools/godoc/vfs/zipfs"
+	"html/template"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -14,6 +15,7 @@ import (
 var fs vfs.FileSystem
 
 func uploadHandler(rw http.ResponseWriter, r *http.Request) {
+
 	r.ParseMultipartForm(32 << 20)
 
 	src, _, err := r.FormFile("epubupload")
@@ -37,16 +39,33 @@ func uploadHandler(rw http.ResponseWriter, r *http.Request) {
 
 	fs = zipfs.New(rc, dst.Name())
 
-	buf, err := vfs.ReadFile(fs, "/content.opf")
+	buf, err := vfs.ReadFile(fs, "/toc.ncx")
+	if err == nil {
+		v := ncx{}
+		err := xml.Unmarshal(buf, &v)
+		if err != nil {
+			fmt.Println(err)
+		}
+		t, err := template.ParseFiles("ncx.template")
+		if err != nil {
+			fmt.Println(err)
+		}
+		t.Execute(rw, v)
+		return
+	} else {
+		fmt.Println(err)
+	}
+
+	buf, err = vfs.ReadFile(fs, "/content.opf")
 	if err != nil {
 		fmt.Println(err)
 	}
 
 	v := OPF{}
 
-	er := xml.Unmarshal(buf, &v)
+	err = xml.Unmarshal(buf, &v)
 	if err != nil {
-		fmt.Println(er)
+		fmt.Println(err)
 	}
 
 	for _, t := range tocFromSpine(v.Spine, v.Manifest) {
@@ -55,16 +74,15 @@ func uploadHandler(rw http.ResponseWriter, r *http.Request) {
 }
 
 func spineHandler(rw http.ResponseWriter, req *http.Request) {
-	if fs == nil {
-		indexHandler(rw, req)
-		return
+	if req.URL.Path == "/" {
+		http.ServeFile(rw, req, "index.html")
+	} else {
+		buf, err := vfs.ReadFile(fs, req.URL.Path)
+		if err != nil {
+			fmt.Println(err)
+		}
+		rw.Write(buf)
 	}
-
-	buf, err := vfs.ReadFile(fs, req.URL.Path)
-	if err != nil {
-		fmt.Println(err)
-	}
-	rw.Write(buf)
 }
 
 func indexHandler(rw http.ResponseWriter, r *http.Request) {

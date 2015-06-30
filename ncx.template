@@ -1,0 +1,16 @@
+<html>
+<head></head>
+
+<body>
+	<ol>
+	{{range .NavMap.NavPoint}}
+		<li>
+			<a href={{.Content.Src}}>
+				{{.NavLabel}}
+			</a>
+		</li>
+	{{end}}
+	</ol>
+<body>
+
+</html>
