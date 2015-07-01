@@ -1,4 +1,4 @@
-package main
+package epub
 
 import (
 	"archive/zip"
@@ -10,21 +10,21 @@ import (
 	"io"
 )
 
-type epub struct {
+type Epub struct {
 	fs vfs.FileSystem
 }
 
-func New(name string) (*epub, error) {
+func New(name string) (*Epub, error) {
 	rc, err := zip.OpenReader(name)
 	if err != nil {
 		return nil, err
 	}
 	//defer rc.Close()
 
-	return &epub{fs: zipfs.New(rc, name)}, nil
+	return &Epub{fs: zipfs.New(rc, name)}, nil
 }
 
-func (e *epub) WriteToc(w io.Writer) error {
+func (e *Epub) WriteToc(w io.Writer) error {
 
 	buf, err := vfs.ReadFile(e.fs, "/toc.ncx")
 	if err != nil {
@@ -51,7 +51,7 @@ func (e *epub) WriteToc(w io.Writer) error {
 	return nil
 }
 
-func (e *epub) WriteSpine(w io.Writer) error {
+func (e *Epub) WriteSpine(w io.Writer) error {
 	buf, err := vfs.ReadFile(e.fs, "/content.opf")
 	if err != nil {
 		return err
@@ -71,7 +71,7 @@ func (e *epub) WriteSpine(w io.Writer) error {
 	return nil
 }
 
-func (e *epub) WriteFile(w io.Writer, path string) error {
+func (e *Epub) WriteFile(w io.Writer, path string) error {
 	buf, err := vfs.ReadFile(e.fs, path)
 	if err != nil {
 		return err

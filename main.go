@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
+	"github.com/gocode/epubViewer/epub"
 	"io"
 	"io/ioutil"
 	"net/http"
 )
 
-var e *epub
+var e *epub.Epub
 
 func uploadHandler(rw http.ResponseWriter, r *http.Request) {
 
@@ -26,7 +27,7 @@ func uploadHandler(rw http.ResponseWriter, r *http.Request) {
 
 	io.Copy(dst, src)
 
-	e, err = New(dst.Name())
+	e, err = epub.New(dst.Name())
 	if err != nil {
 		fmt.Println(err)
 	}
