@@ -1,14 +1,22 @@
 package main
 
 import (
-	"fmt"
-	"github.com/gocode/epubViewer/epub"
+	"github.com/gocode/epubviewer/epub"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
+	"os"
 )
 
-var e *epub.Epub
+var (
+	e      *epub.Epub
+	logger *log.Logger
+)
+
+func init() {
+	logger = log.New(os.Stdout, "epubviewer ", log.LstdFlags)
+}
 
 func uploadHandler(rw http.ResponseWriter, r *http.Request) {
 
@@ -16,12 +24,16 @@ func uploadHandler(rw http.ResponseWriter, r *http.Request) {
 
 	src, _, err := r.FormFile("epubupload")
 	if err != nil {
-		fmt.Println(err)
+		logger.Println(err)
+		rw.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 
 	dst, err := ioutil.TempFile("files", "file")
 	if err != nil {
-		fmt.Println(err)
+		logger.Println(err)
+		rw.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 	defer dst.Close()
 
@@ -29,12 +41,16 @@ func uploadHandler(rw http.ResponseWriter, r *http.Request) {
 
 	e, err = epub.New(dst.Name())
 	if err != nil {
-		fmt.Println(err)
+		logger.Println(err)
+		rw.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 
 	if err := e.WriteToc(rw); err != nil {
 		if err := e.WriteSpine(rw); err != nil {
-			fmt.Println(err)
+			logger.Println(err)
+			rw.WriteHeader(http.StatusInternalServerError)
+			return
 		}
 	}
 }

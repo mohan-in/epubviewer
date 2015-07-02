@@ -8,10 +8,12 @@ import (
 	"golang.org/x/tools/godoc/vfs/zipfs"
 	"html/template"
 	"io"
+	"strings"
 )
 
 type Epub struct {
-	fs vfs.FileSystem
+	fs      vfs.FileSystem
+	isOEBPS bool
 }
 
 func New(name string) (*Epub, error) {
@@ -52,7 +54,14 @@ func (e *Epub) WriteToc(w io.Writer) error {
 }
 
 func (e *Epub) WriteSpine(w io.Writer) error {
+
 	buf, err := vfs.ReadFile(e.fs, "/content.opf")
+	if strings.HasPrefix(err.Error(), "file not found") {
+		buf, err = vfs.ReadFile(e.fs, "/OEBPS/content.opf")
+		if err == nil {
+			e.isOEBPS = true
+		}
+	}
 	if err != nil {
 		return err
 	}
@@ -64,14 +73,23 @@ func (e *Epub) WriteSpine(w io.Writer) error {
 		return err
 	}
 
-	for _, t := range tocFromSpine(v.Spine, v.Manifest) {
-		fmt.Fprintln(w, "<a href="+t.Href+">"+t.Text+"</a><br/>")
+	for _, si := range v.Spine.ItemRefs {
+		for _, mi := range v.Manifest.Items {
+			if si.Idref == mi.Id {
+				fmt.Fprintln(w, "<a href="+mi.Href+">"+si.Idref+"</a><br/>")
+				break
+			}
+		}
 	}
 
 	return nil
 }
 
 func (e *Epub) WriteFile(w io.Writer, path string) error {
+	if e.isOEBPS {
+		path = "/OEBPS" + path
+	}
+
 	buf, err := vfs.ReadFile(e.fs, path)
 	if err != nil {
 		return err
