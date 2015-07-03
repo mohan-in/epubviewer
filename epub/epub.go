@@ -11,9 +11,15 @@ import (
 	"strings"
 )
 
+const (
+	 2 
+	THREE 3
+)
+
 type Epub struct {
 	fs      vfs.FileSystem
 	isOEBPS bool
+	version int
 }
 
 func New(name string) (*Epub, error) {

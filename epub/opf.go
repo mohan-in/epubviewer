@@ -6,6 +6,7 @@ import (
 
 type OPF struct {
 	XMLName  xml.Name `xml:"package"`
+	Version  string   `xml:"version,attr"`
 	Metadata metadata `xml:"metadata"`
 	Manifest manifest `xml:"manifest"`
 	Spine    spine    `xml:"spine"`

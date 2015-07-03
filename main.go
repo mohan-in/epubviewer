@@ -15,7 +15,7 @@ var (
 )
 
 func init() {
-	logger = log.New(os.Stdout, "epubviewer ", log.LstdFlags)
+	logger = log.New(os.Stdout, "epubviewer ", log.Lshortfile)
 }
 
 func uploadHandler(rw http.ResponseWriter, r *http.Request) {
