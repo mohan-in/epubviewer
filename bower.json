@@ -1,0 +1,22 @@
+{
+  "name": "epubviewer",
+  "version": "0.0.0",
+  "homepage": "https://github.com/gocode/epubViewer",
+  "authors": [
+    "gocode <mail2mohanram@gmail.com>"
+  ],
+  "description": "epub viewer",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.0.0",
+    "iron-elements": "PolymerElements/iron-elements#~1.0.1",
+    "paper-elements": "PolymerElements/paper-elements#~1.0.1"
+  }
+}
