@@ -18,18 +18,18 @@ func init() {
 	logger = log.New(os.Stdout, "epubviewer ", log.Lshortfile)
 }
 
-func uploadHandler(rw http.ResponseWriter, r *http.Request) {
+func uploadHandler(rw http.ResponseWriter, req *http.Request) {
 
-	r.ParseMultipartForm(32 << 20)
+	req.ParseMultipartForm(32 << 20)
 
-	src, _, err := r.FormFile("epubupload")
+	src, _, err := req.FormFile("epubupload")
 	if err != nil {
 		logger.Println(err)
 		rw.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	dst, err := ioutil.TempFile("files", "file")
+	dst, err := ioutil.TempFile(".files", "file")
 	if err != nil {
 		logger.Println(err)
 		rw.WriteHeader(http.StatusInternalServerError)
@@ -57,21 +57,30 @@ func uploadHandler(rw http.ResponseWriter, r *http.Request) {
 
 func spineHandler(rw http.ResponseWriter, req *http.Request) {
 	if req.URL.Path == "/" {
-		http.ServeFile(rw, req, "index.html")
-	} else {
-		e.WriteFile(rw, req.URL.Path)
+		indexHandler(rw, req)
+		return
 	}
+
+	e.WriteFile(rw, req.URL.Path)
 }
 
-func indexHandler(rw http.ResponseWriter, r *http.Request) {
-	http.ServeFile(rw, r, "index.html")
+func indexHandler(rw http.ResponseWriter, req *http.Request) {
+	http.ServeFile(rw, req, "static/index.html")
+}
+
+func staticFilesHandler(rw http.ResponseWriter, req *http.Request) {
+	http.ServeFile(rw, req, req.URL.Path[1:])
 }
 
 func main() {
 	http.HandleFunc("/", spineHandler)
-	http.HandleFunc("/index", indexHandler)
+	http.HandleFunc("/static/", staticFilesHandler)
 	http.HandleFunc("/toc", uploadHandler)
 
-	http.ListenAndServe(":9090", nil)
+	defer func() {
+		err := recover()
+		log.Println(err)
+	}()
 
+	http.ListenAndServe(":9090", nil)
 }
