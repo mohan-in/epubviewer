@@ -5,8 +5,9 @@
 	<link rel="icon" href="static/favicon.png">
 
 	<link rel="import" href="static/bower_components/iron-icons/iron-icons.html">
+	<link rel="import" href="static/bower_components/iron-pages/iron-pages.html">
+	<link rel="import" href="static/bower_components/iron-form/iron-form.html">
 
-	<link rel="import" href="static/bower_components/polymer/polymer.html">
 	<link rel="import" href="static/bower_components/paper-toolbar/paper-toolbar.html">
 	<link rel="import" href="static/bower_components/paper-icon-button/paper-icon-button.html">
 	<link rel="import" href="static/bower_components/paper-button/paper-button.html">
@@ -71,6 +72,16 @@
 	      width: 80%;
 	      height: 70%;
 	    }
+
+	    #viewepub {
+	    	height: 100%;
+	    	width: 80%;
+	    }
+
+	    #epubviewer {
+	    	height: 100%;
+	    	width: 80%;
+	    }
 	</style>
 </head>
 
@@ -82,31 +93,44 @@
 		</paper-button>
 	</paper-toolbar>
 
-	<form id="form" action="/toc" method="POST" enctype='multipart/form-data'>
-		<div id="upload">
-			<paper-button id="browse">
-				<paper-icon-button icon="search"></paper-icon-button>
-			</paper-button>
-			<paper-item id="filename"></paper-item>
-			<paper-button id="submit">
-				<paper-icon-button icon="file-upload"></paper-icon-button>
-			</paper-button>
+	
+	
+	<iron-pages id="pages" selected="0">
+		<div id="uploadepub">
+			<form id="epubuploadform" action="/toc" method="POST" enctype='multipart/form-data'>
+				<div id="upload">
+					<paper-button id="browse">
+						<paper-icon-button icon="search"></paper-icon-button>
+					</paper-button>
+					<paper-item id="filename"></paper-item>
+					<paper-button id="submit">
+						<paper-icon-button icon="file-upload"></paper-icon-button>
+					</paper-button>
+				</div>
+
+		    	<input type="file" id="epubupload" name="epubupload"></input>
+			</form>
 		</div>
 
-    	<input type="file" id="epubupload" name="epubupload"></input>
-	</form>
+		<div id="viewepub">
+			<iframe id="epubviewer">
 
-    <paper-dialog id="dialog">
-      <h2>Scrolling</h2>
-      <paper-dialog-scrollable>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-      </paper-dialog-scrollable>
-      <div class="buttons">
-        <paper-button dialog-dismiss>Cancel</paper-button>
-        <paper-button dialog-confirm autofocus>OK</paper-button>
-      </div>
-    </paper-dialog>	
+			</iframe>
+		</div>
+	</iron-pages>
 
+	<paper-dialog id="dialog">
+		<h2>Font Settings</h2>
+			<paper-dialog-scrollable>
+
+			</paper-dialog-scrollable>
+		<div class="buttons">
+			<paper-button dialog-dismiss>Cancel</paper-button>
+			<paper-button dialog-confirm autofocus>OK</paper-button>
+		</div>
+	</paper-dialog>	
+
+	<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
 	<script>
 		document.querySelector('#browse').addEventListener('click', function() {
 			document.querySelector('#epubupload').click();
@@ -117,9 +141,21 @@
 		});
 
 		document.querySelector('#submit').addEventListener('click', function() {
-			document.querySelector('#form').submit();
+			var data = new FormData();
+			data.append("epubupload", document.querySelector('#epubupload').files[0])
+			jQuery.ajax({
+			    url: '/toc',
+			    data: data,
+			    cache: false,
+			    contentType: false,
+			    processData: false,
+			    type: 'POST',
+			    success: function(data){
+			        document.querySelector('#epubviewer').src =  'data:text/html;charset=utf-8,' + encodeURI(data);
+			        document.querySelector('#pages').selectNext();
+			    }
+			});
 		});
-
 
 		document.querySelector('#settings').addEventListener('click', function() {
 			document.querySelector('#dialog').open();
