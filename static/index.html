@@ -20,6 +20,7 @@
 		body {
 		    margin: 0;
 		    text-align: center;
+		    overflow: hidden;
 		}
 
 		form paper-button {
@@ -75,12 +76,13 @@
 
 	    #viewepub {
 	    	height: 100%;
-	    	width: 80%;
+	    	width: 100%;
 	    }
 
 	    #epubviewer {
-	    	height: 100%;
+	    	height: 600px;
 	    	width: 80%;
+	    	border-width: 0px;
 	    }
 	</style>
 </head>
@@ -92,12 +94,10 @@
 			<paper-icon-button icon="settings"></paper-icon-button>
 		</paper-button>
 	</paper-toolbar>
-
-	
 	
 	<iron-pages id="pages" selected="0">
 		<div id="uploadepub">
-			<form id="epubuploadform" action="/toc" method="POST" enctype='multipart/form-data'>
+			<form id="epubuploadform" action="/upload" method="POST" enctype='multipart/form-data'>
 				<div id="upload">
 					<paper-button id="browse">
 						<paper-icon-button icon="search"></paper-icon-button>
@@ -120,7 +120,7 @@
 	</iron-pages>
 
 	<paper-dialog id="dialog">
-		<h2>Font Settings</h2>
+		<h2>Settings</h2>
 			<paper-dialog-scrollable>
 
 			</paper-dialog-scrollable>
@@ -144,17 +144,28 @@
 			var data = new FormData();
 			data.append("epubupload", document.querySelector('#epubupload').files[0])
 			jQuery.ajax({
-			    url: '/toc',
+			    url: '/upload',
 			    data: data,
 			    cache: false,
 			    contentType: false,
 			    processData: false,
 			    type: 'POST',
 			    success: function(data){
-			        document.querySelector('#epubviewer').src =  'data:text/html;charset=utf-8,' + encodeURI(data);
-			        document.querySelector('#pages').selectNext();
+			    	console.log("success");
 			    }
 			});
+	        
+	        document.querySelector('#epubviewer').src =  'http://localhost:9090/toc';
+
+	        var css = document.createElement('link');
+   			css.setAttribute('rel', 'stylesheet');
+   			css.setAttribute('href', 'http://fonts.googleapis.com/css?family=Roboto');
+	        document.querySelector('#epubviewer').contentWindow.document.querySelector('head').appendChild(css);
+
+	        css.setAttribute('href', 'static/epub.css');
+	        document.querySelector('#epubviewer').contentWindow.document.querySelector('head').appendChild(css);
+	        
+	        document.querySelector('#pages').selectNext();
 		});
 
 		document.querySelector('#settings').addEventListener('click', function() {
