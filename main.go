@@ -45,7 +45,9 @@ func uploadHandler(rw http.ResponseWriter, req *http.Request) {
 		rw.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+}
 
+func tocHandler(rw http.ResponseWriter, req *http.Request) {
 	if err := e.WriteToc(rw); err != nil {
 		if err := e.WriteSpine(rw); err != nil {
 			logger.Println(err)
@@ -75,7 +77,8 @@ func staticFilesHandler(rw http.ResponseWriter, req *http.Request) {
 func main() {
 	http.HandleFunc("/", spineHandler)
 	http.HandleFunc("/static/", staticFilesHandler)
-	http.HandleFunc("/toc", uploadHandler)
+	http.HandleFunc("/upload", uploadHandler)
+	http.HandleFunc("/toc", tocHandler)
 
 	defer func() {
 		err := recover()
