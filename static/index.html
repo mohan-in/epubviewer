@@ -113,7 +113,7 @@
 		</div>
 
 		<div id="viewepub">
-			<iframe id="epubviewer">
+			<iframe id="epubviewer" name="epubviewer">
 
 			</iframe>
 		</div>
@@ -155,17 +155,14 @@
 			    }
 			});
 	        
-	        document.querySelector('#epubviewer').src =  'http://localhost:9090/toc';
-
-	        var css = document.createElement('link');
-   			css.setAttribute('rel', 'stylesheet');
-   			css.setAttribute('href', 'http://fonts.googleapis.com/css?family=Roboto');
-	        document.querySelector('#epubviewer').contentWindow.document.querySelector('head').appendChild(css);
-
-	        css.setAttribute('href', 'static/epub.css');
-	        document.querySelector('#epubviewer').contentWindow.document.querySelector('head').appendChild(css);
-	        
+	        document.querySelector('#epubviewer').src =  'http://localhost:9090/toc';      
 	        document.querySelector('#pages').selectNext();
+		});
+
+		document.querySelector('#epubviewer').addEventListener('load', function() {
+			//window.history.pushState('', '',  document.querySelector('#epubviewer').contentWindow.document.href);
+			jQuery('#epubviewer').contents().find('head').append('<link href="static/epub.css" rel="stylesheet" />');
+			jQuery('#epubviewer').contents().find('head').append('<script src="static/epub.js" />');
 		});
 
 		document.querySelector('#settings').addEventListener('click', function() {
