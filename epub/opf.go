@@ -5,44 +5,45 @@ import (
 )
 
 type opf struct {
-	XMLName xml.Name `xml:"package"`
-	Version string   `xml:"version,attr"`
+	XMLName  xml.Name `xml:"package"`
+	Version  string   `xml:"version,attr"`
+	Metadata metadata `xml:"metadata"`
+	Manifest manifest `xml:"manifest"`
+	Spine    spine    `xml:"spine"`
+	Guide    guide    `xml:"guide"`
+}
 
-	Metadata struct {
-		XMLName xml.Name `xml:"metadata"`
-		Title   string   `xml:"title"`
-		Creator []string `xml:"creator"`
-		Lang    string   `xml:"language"`
-	}
+type metadata struct {
+	Title   string   `xml:"title"`
+	Creator []string `xml:"creator"`
+	Lang    string   `xml:"language"`
+}
 
-	Manifest struct {
-		XMLName xml.Name `xml:"manifest"`
+type manifest struct {
+	Item []item `xml:"item"`
+}
 
-		Item []struct {
-			XMLName   xml.Name `xml:"item"`
-			Id        string   `xml:"id,attr"`
-			Href      string   `xml:"href,attr"`
-			MediaType string   `xml:"media-type"`
-		}
-	}
+type item struct {
+	Id        string `xml:"id,attr"`
+	Href      string `xml:"href,attr"`
+	MediaType string `xml:"media-type"`
+}
 
-	Spine struct {
-		XMLName xml.Name `xml:"spine"`
-		TOC     string   `xml:"toc,attr"`
+type spine struct {
+	TOC     string    `xml:"toc,attr"`
+	ItemRef []itemRef `xml:"itemref"`
+}
 
-		ItemRef []struct {
-			XMLName xml.Name `xml:"itemref"`
-			Idref   string   `xml:"idref,attr"`
-		}
-	}
+type itemRef struct {
+	Idref string `xml:"idref,attr"`
+}
 
-	Guide struct {
-		XMLName   xml.Name `xml:"guide"`
-		Reference []struct {
-			XMLName xml.Name `xml:"reference"`
-			toc     string   `xml:"title"`
-			title   string   `xml:"title"`
-			href    string   `xml:"href"`
-		}
-	}
+type guide struct {
+	Reference []reference `xml:"reference"`
+}
+
+type reference struct {
+	toc   string `xml:"title"`
+	title string `xml:"title"`
+	href  string `xml:"href"`
 }

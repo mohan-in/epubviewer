@@ -49,14 +49,11 @@ func uploadHandler(rw http.ResponseWriter, req *http.Request) {
 
 func tocHandler(rw http.ResponseWriter, req *http.Request) {
 	if err := e.Load(); err != nil {
-		logger.Println("==============================================================" + err.Error())
 		rw.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	rw.Write([]byte(e.TocPath))
-
-	e.WriteFile(rw, e.TocPath)
+	e.WriteFile(rw, "/"+e.TocPath)
 }
 
 func spineHandler(rw http.ResponseWriter, req *http.Request) {

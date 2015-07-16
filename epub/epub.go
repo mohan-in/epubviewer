@@ -3,7 +3,6 @@ package epub
 import (
 	"archive/zip"
 	"encoding/xml"
-	"fmt"
 	"golang.org/x/tools/godoc/vfs"
 	"golang.org/x/tools/godoc/vfs/zipfs"
 	"io"
@@ -37,7 +36,6 @@ func (e *Ebook) Load() error {
 	//read .ncx file
 	//if err := e.loadNcx(); err != nil {
 	for _, item := range e.opf.Manifest.Item {
-		fmt.Println("item id is " + item.Id)
 		if item.Id == e.opf.Spine.ItemRef[0].Idref {
 			e.TocPath = item.Href
 			break
@@ -45,17 +43,13 @@ func (e *Ebook) Load() error {
 	}
 	//}
 
-	fmt.Println("toc path is " + e.TocPath)
-
 	return nil
 }
 
 func (e *Ebook) loadOpf() error {
 	buf, err := vfs.ReadFile(e.fs, "/content.opf")
-	fmt.Println("read content.opf")
 	if strings.HasPrefix(err.Error(), "file not found") {
 		buf, err = vfs.ReadFile(e.fs, "/OEBPS/content.opf")
-		fmt.Println("read OEBPS/content.opf")
 		if err == nil {
 			e.isOEBPS = true
 		}
@@ -65,7 +59,6 @@ func (e *Ebook) loadOpf() error {
 	}
 
 	err = xml.Unmarshal(buf, &e.opf)
-	fmt.Println(e.opf.Manifest)
 	if err != nil {
 		return err
 	}
@@ -93,6 +86,7 @@ func (e *Ebook) WriteFile(w io.Writer, path string) error {
 	}
 
 	buf, err := vfs.ReadFile(e.fs, path)
+
 	if err != nil {
 		return err
 	}
