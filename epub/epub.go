@@ -6,59 +6,56 @@ import (
 	"fmt"
 	"golang.org/x/tools/godoc/vfs"
 	"golang.org/x/tools/godoc/vfs/zipfs"
-	"html/template"
 	"io"
 	"strings"
 )
 
-type Epub struct {
+type Ebook struct {
 	fs      vfs.FileSystem
+	opf     opf
+	ncx     ncx
+	TocPath string
 	isOEBPS bool
-	version int
 }
 
-func New(name string) (*Epub, error) {
+func New(name string) (*Ebook, error) {
 	rc, err := zip.OpenReader(name)
 	if err != nil {
 		return nil, err
 	}
 	//defer rc.Close()
 
-	return &Epub{fs: zipfs.New(rc, name)}, nil
+	return &Ebook{fs: zipfs.New(rc, name)}, nil
 }
 
-func (e *Epub) WriteToc(w io.Writer) error {
-
-	buf, err := vfs.ReadFile(e.fs, "/toc.ncx")
-	if err != nil {
+func (e *Ebook) Load() error {
+	//read .opf file
+	if err := e.loadOpf(); err != nil {
 		return err
 	}
 
-	v := ncx{}
-
-	err = xml.Unmarshal(buf, &v)
-	if err != nil {
-		return err
+	//read .ncx file
+	//if err := e.loadNcx(); err != nil {
+	for _, item := range e.opf.Manifest.Item {
+		fmt.Println("item id is " + item.Id)
+		if item.Id == e.opf.Spine.ItemRef[0].Idref {
+			e.TocPath = item.Href
+			break
+		}
 	}
+	//}
 
-	t, err := template.ParseFiles("ncx.template")
-	if err != nil {
-		return err
-	}
-
-	err = t.Execute(w, v)
-	if err != nil {
-		return err
-	}
+	fmt.Println("toc path is " + e.TocPath)
 
 	return nil
 }
 
-func (e *Epub) WriteSpine(w io.Writer) error {
-
+func (e *Ebook) loadOpf() error {
 	buf, err := vfs.ReadFile(e.fs, "/content.opf")
+	fmt.Println("read content.opf")
 	if strings.HasPrefix(err.Error(), "file not found") {
 		buf, err = vfs.ReadFile(e.fs, "/OEBPS/content.opf")
+		fmt.Println("read OEBPS/content.opf")
 		if err == nil {
 			e.isOEBPS = true
 		}
@@ -67,26 +64,30 @@ func (e *Epub) WriteSpine(w io.Writer) error {
 		return err
 	}
 
-	v := OPF{}
-
-	err = xml.Unmarshal(buf, &v)
+	err = xml.Unmarshal(buf, &e.opf)
+	fmt.Println(e.opf.Manifest)
 	if err != nil {
 		return err
-	}
-
-	for _, si := range v.Spine.ItemRefs {
-		for _, mi := range v.Manifest.Items {
-			if si.Idref == mi.Id {
-				fmt.Fprintln(w, "<a href="+mi.Href+">"+si.Idref+"</a><br/>")
-				break
-			}
-		}
 	}
 
 	return nil
 }
 
-func (e *Epub) WriteFile(w io.Writer, path string) error {
+func (e *Ebook) loadNcx() error {
+	buf, err := vfs.ReadFile(e.fs, "/toc.ncx")
+	if err != nil {
+		return err
+	}
+
+	err = xml.Unmarshal(buf, &e.ncx)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (e *Ebook) WriteFile(w io.Writer, path string) error {
 	if e.isOEBPS {
 		path = "/OEBPS" + path
 	}

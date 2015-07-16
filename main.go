@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	e      *epub.Epub
+	e      *epub.Ebook
 	logger *log.Logger
 )
 
@@ -48,13 +48,15 @@ func uploadHandler(rw http.ResponseWriter, req *http.Request) {
 }
 
 func tocHandler(rw http.ResponseWriter, req *http.Request) {
-	if err := e.WriteToc(rw); err != nil {
-		if err := e.WriteSpine(rw); err != nil {
-			logger.Println(err)
-			rw.WriteHeader(http.StatusInternalServerError)
-			return
-		}
+	if err := e.Load(); err != nil {
+		logger.Println("==============================================================" + err.Error())
+		rw.WriteHeader(http.StatusInternalServerError)
+		return
 	}
+
+	rw.Write([]byte(e.TocPath))
+
+	e.WriteFile(rw, e.TocPath)
 }
 
 func spineHandler(rw http.ResponseWriter, req *http.Request) {
