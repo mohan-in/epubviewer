@@ -2,6 +2,8 @@
 <html>
 <head>
 	<title>Epub Viewer</title>
+	<meta http-equiv="cache-control" content="no-cache" />
+
 	<link rel="icon" href="static/favicon.png">
 
 	<link rel="import" href="static/bower_components/iron-icons/iron-icons.html">
@@ -160,9 +162,16 @@
 		});
 
 		document.querySelector('#epubviewer').addEventListener('load', function() {
-			//window.history.pushState('', '',  document.querySelector('#epubviewer').contentWindow.document.href);
-			jQuery('#epubviewer').contents().find('head').append('<link href="static/epub.css" rel="stylesheet" />');
-			jQuery('#epubviewer').contents().find('head').append('<script src="static/epub.js" />');
+			var css = document.createElement('link');
+			css.rel = 'stylesheet';
+			css.href = 'static/epub.css';
+			document.querySelector('#epubviewer').appendChild(css);
+
+			var script = document.createElement('script');
+			script.type = 'text/javascript';
+			script.async = true;
+			script.src = 'static/epub.js';
+			document.querySelector('#epubviewer').appendChild(script);
 		});
 
 		document.querySelector('#settings').addEventListener('click', function() {
