@@ -53,7 +53,7 @@ func tocHandler(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	e.WriteFile(rw, "/"+e.TocPath)
+	e.WriteToc(rw)
 }
 
 func spineHandler(rw http.ResponseWriter, req *http.Request) {

@@ -6,7 +6,6 @@ import (
 	"golang.org/x/tools/godoc/vfs"
 	"golang.org/x/tools/godoc/vfs/zipfs"
 	"io"
-	"strings"
 )
 
 type Ebook struct {
@@ -48,7 +47,7 @@ func (e *Ebook) Load() error {
 
 func (e *Ebook) loadOpf() error {
 	buf, err := vfs.ReadFile(e.fs, "/content.opf")
-	if strings.HasPrefix(err.Error(), "file not found") {
+	if err != nil {
 		buf, err = vfs.ReadFile(e.fs, "/OEBPS/content.opf")
 		if err == nil {
 			e.isOEBPS = true
@@ -78,6 +77,10 @@ func (e *Ebook) loadNcx() error {
 	}
 
 	return nil
+}
+
+func (e *Ebook) WriteToc(w io.Writer) error {
+	return e.WriteFile(w, "/"+e.TocPath)
 }
 
 func (e *Ebook) WriteFile(w io.Writer, path string) error {
