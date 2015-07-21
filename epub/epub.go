@@ -79,8 +79,34 @@ func (e *Ebook) loadNcx() error {
 	return nil
 }
 
-func (e *Ebook) WriteToc(w io.Writer) error {
-	return e.WriteFile(w, "/"+e.TocPath)
+func (e *Ebook) GetToc() (string, error) {
+	return "/" + e.TocPath, nil
+}
+
+func (e *Ebook) GetNextPage(href string) (string, error) {
+	var id string
+	for _, item := range e.opf.Manifest.Item {
+		if item.Href == href {
+			id = item.Id
+			break
+		}
+	}
+
+	var nextId string
+	for i, itemRef := range e.opf.Spine.ItemRef {
+		if itemRef.Idref == id {
+			nextId = e.opf.Spine.ItemRef[i+1].Idref
+			break
+		}
+	}
+
+	for _, item := range e.opf.Manifest.Item {
+		if item.Id == nextId {
+			return item.Href, nil
+		}
+	}
+
+	return "", nil
 }
 
 func (e *Ebook) WriteFile(w io.Writer, path string) error {

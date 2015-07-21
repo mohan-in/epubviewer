@@ -167,11 +167,11 @@
 			    processData: false,
 			    type: 'POST',
 			    success: function(data){
-			    	console.log("success");
+			    	console.log(data)
+			    	document.querySelector('#epubviewer').src = 'http://localhost:9090' + JSON.parse(data).Href;
 			    }
 			});
-	        
-	        document.querySelector('#epubviewer').src =  'http://localhost:9090/toc';      
+	          
 	        document.querySelector('#pages').selectNext();
 		});
 
@@ -193,11 +193,18 @@
 		});
 
 		document.querySelector('#prev-page-btn').addEventListener('click', function() {
-			alert('previous page');
+			alert(document.querySelector('#epubviewer').contentWindow.location.pathname);
 		});
 
 		document.querySelector('#next-page-btn').addEventListener('click', function() {
-			alert('next page');
+			jQuery.ajax({
+			    url: '/nextpage',
+			    data: {href: document.querySelector('#epubviewer').contentWindow.location.pathname},
+			    type: 'POST',
+			    success: function(data){
+			    	document.querySelector('#epubviewer').src = 'http://localhost:9090/' + JSON.parse(data).Href;
+			    }
+			});
 		});
 	</script>
 </body>

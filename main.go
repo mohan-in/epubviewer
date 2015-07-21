@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"github.com/gocode/epubviewer/epub"
 	"io"
 	"io/ioutil"
@@ -45,6 +46,19 @@ func uploadHandler(rw http.ResponseWriter, req *http.Request) {
 		rw.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
+	if err := e.Load(); err != nil {
+		rw.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	type page struct {
+		Href string
+	}
+
+	p, _ := e.GetToc()
+	buf, _ := json.Marshal(page{p})
+	rw.Write(buf)
 }
 
 func tocHandler(rw http.ResponseWriter, req *http.Request) {
@@ -53,7 +67,18 @@ func tocHandler(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	e.WriteToc(rw)
+	//e.WriteToc(rw)
+}
+
+func nextPageHandler(rw http.ResponseWriter, req *http.Request) {
+	page, _ := e.GetNextPage(req.FormValue("href")[1:])
+
+	type nextPage struct {
+		Href string
+	}
+
+	buf, _ := json.Marshal(nextPage{page})
+	rw.Write(buf)
 }
 
 func spineHandler(rw http.ResponseWriter, req *http.Request) {
@@ -62,6 +87,7 @@ func spineHandler(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	logger.Println("spine file" + req.URL.Path)
 	e.WriteFile(rw, req.URL.Path)
 }
 
@@ -78,6 +104,7 @@ func main() {
 	http.HandleFunc("/static/", staticFilesHandler)
 	http.HandleFunc("/upload", uploadHandler)
 	http.HandleFunc("/toc", tocHandler)
+	http.HandleFunc("/nextpage", nextPageHandler)
 
 	defer func() {
 		err := recover()
