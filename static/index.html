@@ -193,7 +193,14 @@
 		});
 
 		document.querySelector('#prev-page-btn').addEventListener('click', function() {
-			alert(document.querySelector('#epubviewer').contentWindow.location.pathname);
+			jQuery.ajax({
+			    url: '/prevpage',
+			    data: {href: document.querySelector('#epubviewer').contentWindow.location.pathname},
+			    type: 'POST',
+			    success: function(data){
+			    	document.querySelector('#epubviewer').src = 'http://localhost:9090/' + JSON.parse(data).Href;
+			    }
+			});
 		});
 
 		document.querySelector('#next-page-btn').addEventListener('click', function() {

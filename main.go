@@ -81,13 +81,23 @@ func nextPageHandler(rw http.ResponseWriter, req *http.Request) {
 	rw.Write(buf)
 }
 
+func prevPageHandler(rw http.ResponseWriter, req *http.Request) {
+	page, _ := e.GetPrevPage(req.FormValue("href")[1:])
+
+	type prevPage struct {
+		Href string
+	}
+
+	buf, _ := json.Marshal(prevPage{page})
+	rw.Write(buf)
+}
+
 func spineHandler(rw http.ResponseWriter, req *http.Request) {
 	if req.URL.Path == "/" {
 		indexHandler(rw, req)
 		return
 	}
 
-	logger.Println("spine file" + req.URL.Path)
 	e.WriteFile(rw, req.URL.Path)
 }
 
@@ -105,6 +115,7 @@ func main() {
 	http.HandleFunc("/upload", uploadHandler)
 	http.HandleFunc("/toc", tocHandler)
 	http.HandleFunc("/nextpage", nextPageHandler)
+	http.HandleFunc("/prevpage", prevPageHandler)
 
 	defer func() {
 		err := recover()

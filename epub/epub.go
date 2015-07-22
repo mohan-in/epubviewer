@@ -109,6 +109,32 @@ func (e *Ebook) GetNextPage(href string) (string, error) {
 	return "", nil
 }
 
+func (e *Ebook) GetPrevPage(href string) (string, error) {
+	var id string
+	for _, item := range e.opf.Manifest.Item {
+		if item.Href == href {
+			id = item.Id
+			break
+		}
+	}
+
+	var nextId string
+	for i, itemRef := range e.opf.Spine.ItemRef {
+		if itemRef.Idref == id {
+			nextId = e.opf.Spine.ItemRef[i-1].Idref
+			break
+		}
+	}
+
+	for _, item := range e.opf.Manifest.Item {
+		if item.Id == nextId {
+			return item.Href, nil
+		}
+	}
+
+	return "", nil
+}
+
 func (e *Ebook) WriteFile(w io.Writer, path string) error {
 	if e.isOEBPS {
 		path = "/OEBPS" + path
