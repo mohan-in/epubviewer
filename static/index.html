@@ -17,6 +17,7 @@
 	<link rel="import" href="static/bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
 	<link rel="import" href="static/bower_components/paper-fab/paper-fab.html">
 
+
 	<link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
 
 	<style>
@@ -72,10 +73,10 @@
 			align-items: center;
 		}
 
-		paper-fab {
+		#prev-page-btn, #next-page-btn {
 			margin: 30px;
-			--paper-fab-background: var(--paper-light-blue-500);
-			--paper-fab-keyboard-focus-background: var(--paper-light-blue-900);
+			background: #3f51b5;
+			color: #fff;
 		}
 
 		#epubupload {
@@ -85,8 +86,8 @@
 		}
 
 	    #dialog {
-	      width: 80%;
-	      height: 70%;
+			width: 80%;
+			height: 70%;
 	    }
 
 	    #viewepub {
