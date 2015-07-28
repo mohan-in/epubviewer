@@ -1,0 +1,39 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+
+<dom-module id="settings-dialog">
+
+	<style>
+		:host ::content paper-dialog {
+			width: 800px;
+			height: 500px;
+		}
+	</style>
+
+	<template>
+		<paper-dialog id="dialog">
+			<h2>Settings</h2>
+				<paper-dialog-scrollable>
+
+				</paper-dialog-scrollable>
+			<div class="buttons">
+				<paper-button dialog-dismiss>Cancel</paper-button>
+				<paper-button dialog-confirm autofocus>OK</paper-button>
+			</div>
+		</paper-dialog>	
+	</template>
+
+	<script>
+		Polymer({
+			is: "settings-dialog",
+
+			open : function(){
+				this.$.dialog.open();
+			},
+		});
+	</script>
+
+</dom-module>
+
+

@@ -1,0 +1,106 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="bower_components/paper-button/paper-button.html">
+<link rel="import" href="bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="bower_components/iron-form/iron-form.html">
+
+<link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+
+<dom-module id="file-upload">
+
+	<style>
+		:host ::content form {
+			height: 500px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+
+		:host ::content #upload {
+			display: flex;
+			height: 50px;
+			width: 800px;
+			margin: 5px;
+		}
+
+		:host ::content paper-button {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			width: 100px;	
+			margin: 0px;
+			background: #3f51b5;
+			color: #fff;
+		}
+
+		:host ::content paper-item {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			border-top-style: solid;
+			border-bottom-style: solid;
+			border-width: 1px;
+			width: 600px;
+			font-family: 'Roboto';
+			font-style: italic;
+			font-size: 20px;
+		}
+
+		:host ::content	input {
+			visibility: hidden;
+			width: 0px;
+			height: 0px;
+		}
+	</style>
+
+	<template>
+		<form id="epubuploadform" action="/upload" method="POST" enctype='multipart/form-data'>
+			<div id="upload">
+				<paper-button on-click="browseFile">
+					<paper-icon-button icon="search"></paper-icon-button>
+				</paper-button>
+				<paper-item id="filename"></paper-item>
+				<paper-button on-click="submitForm">
+					<paper-icon-button icon="file-upload"></paper-icon-button>
+				</paper-button>
+			</div>
+
+	    	<input type="file" id="epubupload" name="epubupload" on-change="changeName"></input>
+		</form>
+	</template>
+
+	<script>
+		Polymer({
+			is: "file-upload",
+
+			browseFile: function() {
+				this.$.epubupload.click();
+			},
+
+			changeName: function() {
+				this.$.filename.innerHTML = this.$.epubupload.files[0].name;
+			},
+
+			submitForm: function() {
+				var data = new FormData();
+				data.append("epubupload", this.$.epubupload.files[0])
+				jQuery.ajax({
+				    url: '/upload',
+				    data: data,
+				    cache: false,
+				    contentType: false,
+				    processData: false,
+				    type: 'POST',
+				    success: function(data){
+				    	console.log(data)
+				    	this.$.epubviewer.src = 'http://localhost:9090' + JSON.parse(data).Href;
+				    }
+				});
+				nextpage();
+			}
+		});
+	</script>
+
+</dom-module>
+
+
