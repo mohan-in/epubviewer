@@ -73,6 +73,14 @@
 		Polymer({
 			is: "file-upload",
 
+			properties: {
+				tocSrc: {
+					type: String,
+					notify: true,
+					reflectToAttribute: true
+				}
+			},
+
 			browseFile: function() {
 				this.$.epubupload.click();
 			},
@@ -92,11 +100,11 @@
 				    processData: false,
 				    type: 'POST',
 				    success: function(data){
-				    	console.log(data)
-				    	this.$.epubviewer.src = 'http://localhost:9090' + JSON.parse(data).Href;
+				    	console.log(this.tocSrc);
+				    	console.log(data);
+				    	this.tocSrc = JSON.parse(data).Href;
 				    }
 				});
-				nextpage();
 			}
 		});
 	</script>

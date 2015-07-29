@@ -33,6 +33,21 @@
 		Polymer({
 			is: "epub-viewer",
 
+			properties: {
+				tocSrc: {
+					type: String,
+					notify: true
+				}
+			},
+
+			listeners: {
+				'tocSrc-changed': 'tocSrcChanged'
+			},
+
+			tocSrcChanged: function() {
+				this.$.epubviewer.src = tocSrc.value;
+			},
+
 			attached: function() {
 				this.$.epubviewer.addEventListener('load', function() {
 					var css = document.createElement('link');
