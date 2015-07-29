@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Epub Viewer</title>
+	<title>Epub Reader</title>
 	<meta http-equiv="cache-control" content="no-cache" />
 
 	<link rel="icon" href="static/favicon.png">
 
-	<link rel="import" href="static/bower_components/iron-pages/iron-pages.html">
-	<link rel="import" href="static/bower_components/paper-toolbar/paper-toolbar.html">
-
+	<link rel="import" href="static/epub-reader.html">
 	<link rel="import" href="static/file-upload.html">
 	<link rel="import" href="static/settings-dialog.html">
 	<link rel="import" href="static/epub-viewer.html">
@@ -18,48 +16,12 @@
 	<style>
 		body {
 		    margin: 0;
-		    text-align: center;
-		    overflow: hidden;
-		}
-
-		#viewepub {
-			height: 100%;
-	    	width: 100%;
 		}
 	</style>
 </head>
 
 <body>
-	<paper-toolbar>
-		<div class="title">Epub Viewer</div>
-		<paper-button id="settings">
-			<paper-icon-button icon="settings"></paper-icon-button>
-		</paper-button>
-	</paper-toolbar>
-	
-	<iron-pages id="pages" selected="0">
-		<div id="uploadepub">
-			<file-upload></file-upload>
-		</div>
-
-		<div id="viewepub">
-			<epub-viewer></epub-viewer>
-		</div>
-	</iron-pages>
-
-	
-	<settings-dialog id="dialog">
-	</settings-dialog>
-
-	<script>
-		document.querySelector('#settings').addEventListener('click', function() {
-			document.querySelector('#dialog').open();
-		});
-
-		document.querySelector('file-upload').addEventListener('nextpage', function() {
-			document.querySelector('#pages').selectNext();	
-		});
-	</script>
+	<epub-reader></epub-reader>
 </body>
 
 </html>

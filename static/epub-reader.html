@@ -1,0 +1,62 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="bower_components/paper-toolbar/paper-toolbar.html">
+
+<dom-module id="epub-reader">
+
+	<style>
+		:host ::content epub-viewer {
+			height: 100%;
+	    	width: 100%;
+		}
+
+		:host ::content paper-toolbar {
+			text-align: center;
+		}
+	</style>
+
+	<template>
+		<paper-toolbar>
+			<div class="title">Epub Reader</div>
+			<paper-button on-click="openSettingsDialog">
+				<paper-icon-button icon="settings"></paper-icon-button>
+			</paper-button>
+		</paper-toolbar>
+
+		<iron-pages id="pages" selected="0">
+			<file-upload tocSrc="tochome"></file-upload>
+			<epub-viewer id="epubviewer"></epub-viewer>
+		</iron-pages>
+
+		<settings-dialog id="dialog">
+		</settings-dialog>
+	</template>
+
+	<script>
+		Polymer({
+			is: "epub-reader",
+
+			properties: {
+				tocSrc: {
+					type: String,
+					notify: true,
+					value: "tochome"
+				}
+			},
+
+			listeners: {
+				'tocSrc-changed': 'tocSrcChanged'
+			},
+
+			tocSrcChanged: function(event) {
+				console.log(event.datail.value);
+				this.$.epubviewer.tocSrc = 'http://localhost:9090' + tocSrc.value;
+			},
+
+			openSettingsDialog: function() {
+				this.$.dialog.open();
+			}
+		});
+	</script>
+
+</dom-module>
