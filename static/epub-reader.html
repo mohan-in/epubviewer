@@ -24,7 +24,7 @@
 		</paper-toolbar>
 
 		<iron-pages id="pages" selected="0">
-			<file-upload tocSrc="tochome"></file-upload>
+			<file-upload toc-src="{{tocSrc}}"></file-upload>
 			<epub-viewer id="epubviewer"></epub-viewer>
 		</iron-pages>
 
@@ -39,18 +39,17 @@
 			properties: {
 				tocSrc: {
 					type: String,
-					notify: true,
-					value: "tochome"
+					notify: true
 				}
 			},
 
 			listeners: {
-				'tocSrc-changed': 'tocSrcChanged'
+				'toc-src-changed': 'tocSrcChanged'
 			},
 
 			tocSrcChanged: function(event) {
-				console.log(event.datail.value);
-				this.$.epubviewer.tocSrc = 'http://localhost:9090' + tocSrc.value;
+				this.$.pages.selectNext();
+				this.$.epubviewer.tocSrc = 'http://localhost:9090' + event.detail.value;
 			},
 
 			openSettingsDialog: function() {

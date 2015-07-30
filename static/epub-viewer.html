@@ -25,7 +25,7 @@
 
 	<template>
 		<paper-fab on-click="prev" icon="arrow-back"></paper-fab>
-		<iframe id="epubviewer"></iframe>
+		<iframe id="epubviewer" src={{tocSrc}}></iframe>
 		<paper-fab on-click="next" icon="arrow-forward"></paper-fab>
 	</template>
 
@@ -34,53 +34,29 @@
 			is: "epub-viewer",
 
 			properties: {
-				tocSrc: {
-					type: String,
-					notify: true
-				}
-			},
-
-			listeners: {
-				'tocSrc-changed': 'tocSrcChanged'
-			},
-
-			tocSrcChanged: function() {
-				this.$.epubviewer.src = tocSrc.value;
-			},
-
-			attached: function() {
-				this.$.epubviewer.addEventListener('load', function() {
-					var css = document.createElement('link');
-					css.rel = 'stylesheet';
-					css.href = 'static/epub.css';
-					this.$.epubviewer.appendChild(css);
-
-					var script = document.createElement('script');
-					script.type = 'text/javascript';
-					script.async = true;
-					script.src = 'static/epub.js';
-					this.$.epubviewer.appendChild(script);
-				});
+				tocSrc: String
 			},
 
 			prev: function() {
+				var that = this;
 				jQuery.ajax({
 				    url: '/prevpage',
-				    data: {href: document.querySelector('#epubviewer').contentWindow.location.pathname},
+				    data: {href: that.$.epubviewer.contentWindow.location.pathname},
 				    type: 'POST',
 				    success: function(data){
-				    	document.querySelector('#epubviewer').src = 'http://localhost:9090/' + JSON.parse(data).Href;
+				    	that.$.epubviewer.src = 'http://localhost:9090/' + JSON.parse(data).Href;
 				    }
 				});
 			},
 
 			next: function() {
+				var that = this;
 				jQuery.ajax({
 				    url: '/nextpage',
-				    data: {href: document.querySelector('#epubviewer').contentWindow.location.pathname},
+				    data: {href: that.$.epubviewer.contentWindow.location.pathname},
 				    type: 'POST',
 				    success: function(data){
-				    	document.querySelector('#epubviewer').src = 'http://localhost:9090/' + JSON.parse(data).Href;
+				    	that.$.epubviewer.src = 'http://localhost:9090/' + JSON.parse(data).Href;
 				    }
 				});
 			}

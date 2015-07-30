@@ -76,8 +76,7 @@
 			properties: {
 				tocSrc: {
 					type: String,
-					notify: true,
-					reflectToAttribute: true
+					notify: true
 				}
 			},
 
@@ -91,6 +90,7 @@
 
 			submitForm: function() {
 				var data = new FormData();
+				var that = this;
 				data.append("epubupload", this.$.epubupload.files[0])
 				jQuery.ajax({
 				    url: '/upload',
@@ -100,9 +100,7 @@
 				    processData: false,
 				    type: 'POST',
 				    success: function(data){
-				    	console.log(this.tocSrc);
-				    	console.log(data);
-				    	this.tocSrc = JSON.parse(data).Href;
+				    	that.tocSrc = JSON.parse(data).Href;
 				    }
 				});
 			}
