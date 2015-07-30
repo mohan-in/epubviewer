@@ -25,7 +25,7 @@
 
 	<template>
 		<paper-fab on-click="prev" icon="arrow-back"></paper-fab>
-		<iframe id="epubviewer" src={{tocSrc}}></iframe>
+		<iframe id="epubviewer" src={{src}}></iframe>
 		<paper-fab on-click="next" icon="arrow-forward"></paper-fab>
 	</template>
 
@@ -34,7 +34,7 @@
 			is: "epub-viewer",
 
 			properties: {
-				tocSrc: String
+				src: String
 			},
 
 			prev: function() {

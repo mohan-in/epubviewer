@@ -74,7 +74,7 @@
 			is: "file-upload",
 
 			properties: {
-				tocSrc: {
+				src: {
 					type: String,
 					notify: true
 				}
@@ -100,7 +100,7 @@
 				    processData: false,
 				    type: 'POST',
 				    success: function(data){
-				    	that.tocSrc = JSON.parse(data).Href;
+				    	that.src = JSON.parse(data).Href;
 				    }
 				});
 			}
