@@ -40,12 +40,7 @@ func uploadHandler(rw http.ResponseWriter, req *http.Request) {
 
 	io.Copy(dst, src)
 
-	e, err = epub.New(dst.Name())
-	if err != nil {
-		logger.Println(err)
-		rw.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	e = epub.New(dst.Name())
 
 	if err := e.Load(); err != nil {
 		rw.WriteHeader(http.StatusInternalServerError)
@@ -56,7 +51,7 @@ func uploadHandler(rw http.ResponseWriter, req *http.Request) {
 		Href string
 	}
 
-	p, _ := e.GetToc()
+	p := e.GetToc()
 	buf, _ := json.Marshal(page{p})
 	rw.Write(buf)
 }
@@ -71,7 +66,7 @@ func tocHandler(rw http.ResponseWriter, req *http.Request) {
 }
 
 func nextPageHandler(rw http.ResponseWriter, req *http.Request) {
-	page, _ := e.GetNextPage(req.FormValue("href")[1:])
+	page := e.GetNextPage(req.FormValue("href")[1:])
 
 	type nextPage struct {
 		Href string
@@ -82,7 +77,7 @@ func nextPageHandler(rw http.ResponseWriter, req *http.Request) {
 }
 
 func prevPageHandler(rw http.ResponseWriter, req *http.Request) {
-	page, _ := e.GetPrevPage(req.FormValue("href")[1:])
+	page := e.GetPrevPage(req.FormValue("href")[1:])
 
 	type prevPage struct {
 		Href string
