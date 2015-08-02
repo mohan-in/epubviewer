@@ -8,10 +8,10 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 )
 
 var (
-	e      *epub.Ebook
 	logger *log.Logger
 )
 
@@ -40,12 +40,15 @@ func uploadHandler(rw http.ResponseWriter, req *http.Request) {
 
 	io.Copy(dst, src)
 
-	e = epub.New(dst.Name())
+	e := epub.New(dst.Name())
 
 	if err := e.Load(); err != nil {
 		rw.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
+	c := http.Cookie{Name: "BookName", Value: strings.Replace(dst.Name(), "\\", "*", -1)}
+	http.SetCookie(rw, &c)
 
 	type page struct {
 		Href string
@@ -57,15 +60,24 @@ func uploadHandler(rw http.ResponseWriter, req *http.Request) {
 }
 
 func tocHandler(rw http.ResponseWriter, req *http.Request) {
+	c, _ := req.Cookie("BookName")
+	e := epub.New(strings.Replace(c.Value, "*", "\\", -1))
 	if err := e.Load(); err != nil {
 		rw.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	//e.WriteToc(rw)
+	e.WriteToc(rw)
 }
 
 func nextPageHandler(rw http.ResponseWriter, req *http.Request) {
+	c, _ := req.Cookie("BookName")
+	e := epub.New(strings.Replace(c.Value, "*", "\\", -1))
+	if err := e.Load(); err != nil {
+		rw.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
 	page := e.GetNextPage(req.FormValue("href")[1:])
 
 	type nextPage struct {
@@ -77,6 +89,13 @@ func nextPageHandler(rw http.ResponseWriter, req *http.Request) {
 }
 
 func prevPageHandler(rw http.ResponseWriter, req *http.Request) {
+	c, _ := req.Cookie("BookName")
+	e := epub.New(strings.Replace(c.Value, "*", "\\", -1))
+	if err := e.Load(); err != nil {
+		rw.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
 	page := e.GetPrevPage(req.FormValue("href")[1:])
 
 	type prevPage struct {
@@ -90,6 +109,13 @@ func prevPageHandler(rw http.ResponseWriter, req *http.Request) {
 func spineHandler(rw http.ResponseWriter, req *http.Request) {
 	if req.URL.Path == "/" {
 		indexHandler(rw, req)
+		return
+	}
+
+	c, _ := req.Cookie("BookName")
+	e := epub.New(strings.Replace(c.Value, "*", "\\", -1))
+	if err := e.Load(); err != nil {
+		rw.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
