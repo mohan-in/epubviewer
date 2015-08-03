@@ -73,13 +73,6 @@
 		Polymer({
 			is: "file-upload",
 
-			properties: {
-				src: {
-					type: String,
-					notify: true
-				}
-			},
-
 			browseFile: function() {
 				this.$.epubupload.click();
 			},
@@ -89,20 +82,7 @@
 			},
 
 			submitForm: function() {
-				var data = new FormData();
-				var that = this;
-				data.append("epubupload", this.$.epubupload.files[0])
-				jQuery.ajax({
-				    url: '/upload',
-				    data: data,
-				    cache: false,
-				    contentType: false,
-				    processData: false,
-				    type: 'POST',
-				    success: function(data){
-				    	that.src = JSON.parse(data).Href;
-				    }
-				});
+				this.$.epubuploadform.submit();
 			}
 		});
 	</script>

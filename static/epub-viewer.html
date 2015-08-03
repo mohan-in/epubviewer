@@ -25,7 +25,7 @@
 
 	<template>
 		<paper-fab on-click="prev" icon="arrow-back"></paper-fab>
-		<iframe id="epubviewer" src={{src}}></iframe>
+		<iframe id="epubviewer"></iframe>
 		<paper-fab on-click="next" icon="arrow-forward"></paper-fab>
 	</template>
 
@@ -33,8 +33,17 @@
 		Polymer({
 			is: "epub-viewer",
 
-			properties: {
-				src: String
+			next: function() {
+				var that = this;
+				jQuery.ajax({
+				    url: '/nextpage',
+				    data: {href: that.$.epubviewer.contentWindow.location.pathname},
+				    type: 'POST',
+				    success: function(data){
+				    	history.pushState(null, null, '/epubviewer/' + JSON.parse(data).Href);
+				    	that.$.epubviewer.src = 'http://localhost:9090/' + JSON.parse(data).Href;
+				    }
+				});
 			},
 
 			prev: function() {
@@ -44,18 +53,7 @@
 				    data: {href: that.$.epubviewer.contentWindow.location.pathname},
 				    type: 'POST',
 				    success: function(data){
-				    	that.$.epubviewer.src = 'http://localhost:9090/' + JSON.parse(data).Href;
-				    }
-				});
-			},
-
-			next: function() {
-				var that = this;
-				jQuery.ajax({
-				    url: '/nextpage',
-				    data: {href: that.$.epubviewer.contentWindow.location.pathname},
-				    type: 'POST',
-				    success: function(data){
+				    	history.pushState(null, null, '/epubviewer/' + JSON.parse(data).Href);
 				    	that.$.epubviewer.src = 'http://localhost:9090/' + JSON.parse(data).Href;
 				    }
 				});
