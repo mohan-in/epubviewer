@@ -1,10 +1,10 @@
-<link rel="import" href="bower_components/polymer/polymer.html">
-<link rel="import" href="bower_components/iron-pages/iron-pages.html">
-<link rel="import" href="bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="/static/bower_components/polymer/polymer.html">
+<link rel="import" href="/static/bower_components/iron-pages/iron-pages.html">
 
-<link rel="import" href="file-upload.html">
-<link rel="import" href="settings-dialog.html">
-<link rel="import" href="epub-viewer.html">
+
+<link rel="import" href="/static/file-upload.html">
+<link rel="import" href="/static/settings-dialog.html">
+<link rel="import" href="/static/epub-viewer.html">
 
 <dom-module id="epub-reader">
 
@@ -31,27 +31,11 @@
 			<file-upload></file-upload>
 			<epub-viewer></epub-viewer>
 		</iron-pages>
-
-		<settings-dialog id="dialog">
-		</settings-dialog>
 	</template>
 
 	<script>
 		Polymer({
 			is: "epub-reader",
-
-/*			ready: function() {
-				window.addEventListener("pushstate", function(e) {
-					console.log('adfasdfasd');
-    				if(document.location.pathname.startsWith("/epubviewer")) {
-						this.$.pages.selected = 1;
-					}
-				});
-			},*/
-
-			openSettingsDialog: function() {
-				this.$.dialog.open();
-			}
 		});
 	</script>
 

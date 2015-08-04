@@ -50,7 +50,13 @@ func uploadHandler(rw http.ResponseWriter, req *http.Request) {
 	c := http.Cookie{Name: "BookName", Value: strings.Replace(dst.Name(), "\\", "*", -1)}
 	http.SetCookie(rw, &c)
 
-	http.Redirect(rw, req, "http://localhost:9090/epubviewer"+e.GetToc(), 307)
+	type nextPage struct {
+		Href string
+	}
+
+	page := "/epubviewer/" + strings.Replace(dst.Name(), "\\", "*", -1) + e.GetToc()
+	buf, _ := json.Marshal(nextPage{page})
+	rw.Write(buf)
 }
 
 func tocHandler(rw http.ResponseWriter, req *http.Request) {
@@ -65,7 +71,7 @@ func tocHandler(rw http.ResponseWriter, req *http.Request) {
 }
 
 func epubViewerHandler(rw http.ResponseWriter, req *http.Request) {
-	indexHandler(rw, req)
+	http.ServeFile(rw, req, "static/view.html")
 }
 
 func nextPageHandler(rw http.ResponseWriter, req *http.Request) {
