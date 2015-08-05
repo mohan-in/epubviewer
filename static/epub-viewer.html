@@ -1,7 +1,11 @@
 <link rel="import" href="/static/bower_components/polymer/polymer.html">
 <link rel="import" href="/static/bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="/static/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/static/bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="/static/bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="/static/bower_components/paper-fab/paper-fab.html">
+
+<link rel="import" href="/static/settings-dialog.html">
 
 <dom-module id="epub-viewer">
 
@@ -60,18 +64,24 @@
 				}
 			},
 
+			ready: function() {
+				window.addEventListener('popstate', function() {
+
+				});
+			},
+
 			computeHref: function(filename, src) {
-				history.pushState(null, null, this.href);
 				return '/epubviewer/' + filename + '/' + src;
 			},
 
 			attached: function() {
 				var url = document.location.pathname.split("/");
 				this.filename = url[2];
-				this.src = '';
-				for (var i = 3, len = url.length; i<len; i++){
-    				this.src += url[i];
-				}	
+				this.src = url[3];
+				for (var i = 4, len = url.length; i<len; i++){
+    				this.src = this.src + '/' + url[i];
+				}
+				history.pushState(null, null, this.href);
 				this.$.epubviewer.src = 'http://localhost:9090/' + this.src;
 			},
 
@@ -83,6 +93,7 @@
 				    type: 'POST',
 				    success: function(data){
 				    	that.src =  JSON.parse(data).Href;
+				    	history.pushState(null, null, that.href);
 				    	that.$.epubviewer.src = '/' + that.src;
 				    }
 				});
@@ -96,6 +107,7 @@
 				    type: 'POST',
 				    success: function(data){
 				    	that.src =  JSON.parse(data).Href;
+				    	history.pushState(null, null, that.href);
 				    	that.$.epubviewer.src = '/' + that.src;
 				    }
 				});
