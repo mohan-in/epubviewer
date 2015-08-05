@@ -81,6 +81,7 @@
 				for (var i = 4, len = url.length; i<len; i++){
     				this.src = this.src + '/' + url[i];
 				}
+				document.cookie = 'bookname=' + this.filename +';path=/';
 				history.pushState(null, null, this.href);
 				this.$.epubviewer.src = 'http://localhost:9090/' + this.src;
 			},
@@ -89,7 +90,10 @@
 				var that = this;
 				jQuery.ajax({
 				    url: '/nextpage',
-				    data: {href: that.$.epubviewer.contentWindow.location.pathname},
+				    data: {
+				    	bookname: that.filename,
+				    	href: that.$.epubviewer.contentWindow.location.pathname
+				    },
 				    type: 'POST',
 				    success: function(data){
 				    	that.src =  JSON.parse(data).Href;
@@ -103,7 +107,10 @@
 				var that = this;
 				jQuery.ajax({
 				    url: '/prevpage',
-				    data: {href: that.$.epubviewer.contentWindow.location.pathname},
+				    data: {
+				    	bookname: that.filename,
+				    	href: that.$.epubviewer.contentWindow.location.pathname
+				    },
 				    type: 'POST',
 				    success: function(data){
 				    	that.src =  JSON.parse(data).Href;

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"github.com/gocode/epubviewer/epub"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -23,46 +22,47 @@ func uploadHandler(rw http.ResponseWriter, req *http.Request) {
 
 	req.ParseMultipartForm(32 << 20)
 
-	src, _, err := req.FormFile("epubupload")
+	srcFile, header, err := req.FormFile("epubupload")
 	if err != nil {
 		logger.Println(err)
 		rw.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	dst, err := ioutil.TempFile(".files", "file")
+	dstFileName := strings.Replace(header.Filename, " ", "_", -1)
+
+	dstFile, err := os.Create(".files/" + dstFileName)
 	if err != nil {
 		logger.Println(err)
 		rw.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	defer dst.Close()
+	defer dstFile.Close()
 
-	io.Copy(dst, src)
+	io.Copy(dstFile, srcFile)
 
-	e := epub.New(dst.Name())
+	e := epub.New(".files/" + dstFileName)
 
 	if err := e.Load(); err != nil {
+		logger.Println(err)
 		rw.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-
-	c := http.Cookie{Name: "BookName", Value: strings.Replace(dst.Name(), "\\", "*", -1)}
-	http.SetCookie(rw, &c)
 
 	type nextPage struct {
 		Href string
 	}
 
-	page := "/epubviewer/" + strings.Replace(dst.Name(), "\\", "*", -1) + e.GetToc()
+	page := "/epubviewer/" + dstFileName + e.GetToc()
 	buf, _ := json.Marshal(nextPage{page})
 	rw.Write(buf)
 }
 
 func tocHandler(rw http.ResponseWriter, req *http.Request) {
-	c, _ := req.Cookie("BookName")
-	e := epub.New(strings.Replace(c.Value, "*", "\\", -1))
+	e := epub.New(".files/" + req.FormValue("bookname"))
+
 	if err := e.Load(); err != nil {
+		logger.Println(err)
 		rw.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -70,14 +70,11 @@ func tocHandler(rw http.ResponseWriter, req *http.Request) {
 	e.WriteToc(rw)
 }
 
-func epubViewerHandler(rw http.ResponseWriter, req *http.Request) {
-	http.ServeFile(rw, req, "static/view.html")
-}
-
 func nextPageHandler(rw http.ResponseWriter, req *http.Request) {
-	c, _ := req.Cookie("BookName")
-	e := epub.New(strings.Replace(c.Value, "*", "\\", -1))
+	e := epub.New(".files/" + req.FormValue("bookname"))
+
 	if err := e.Load(); err != nil {
+		logger.Println(err)
 		rw.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -93,9 +90,10 @@ func nextPageHandler(rw http.ResponseWriter, req *http.Request) {
 }
 
 func prevPageHandler(rw http.ResponseWriter, req *http.Request) {
-	c, _ := req.Cookie("BookName")
-	e := epub.New(strings.Replace(c.Value, "*", "\\", -1))
+	e := epub.New(".files/" + req.FormValue("bookname"))
+
 	if err := e.Load(); err != nil {
+		logger.Println(err)
 		rw.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -116,9 +114,11 @@ func spineHandler(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	c, _ := req.Cookie("BookName")
-	e := epub.New(strings.Replace(c.Value, "*", "\\", -1))
+	c, _ := req.Cookie("bookname")
+	e := epub.New(".files/" + c.Value)
+
 	if err := e.Load(); err != nil {
+		logger.Println(err)
 		rw.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -128,6 +128,10 @@ func spineHandler(rw http.ResponseWriter, req *http.Request) {
 
 func indexHandler(rw http.ResponseWriter, req *http.Request) {
 	http.ServeFile(rw, req, "static/index.html")
+}
+
+func epubViewerHandler(rw http.ResponseWriter, req *http.Request) {
+	http.ServeFile(rw, req, "static/view.html")
 }
 
 func staticFilesHandler(rw http.ResponseWriter, req *http.Request) {
