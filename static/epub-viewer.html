@@ -4,19 +4,23 @@
 <link rel="import" href="/static/bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="/static/bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="/static/bower_components/paper-fab/paper-fab.html">
-
-<link rel="import" href="/static/settings-dialog.html">
+<link rel="import" href="/static/bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="/static/bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="/static/bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="/static/bower_components/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="/static/bower_components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="/static/bower_components/paper-slider/paper-slider.html">
 
 <dom-module id="epub-viewer">
 
 	<style>
-		#body {
+		#body, paper-dialog-scrollable {
 			display: flex;
 			justify-content: center;
 			align-items: center;
 		}
 
-		paper-toolbar {
+		paper-toolbar, h2 {
 			text-align: center;
 		}
 
@@ -28,6 +32,31 @@
 
 	    paper-fab {
 			margin: 30px;
+			background: #3f51b5;
+			color: #fff;
+		}
+
+		paper-dialog {
+			height: 500px;
+			width: 500px;
+		}
+
+		paper-slider {
+			width: 80%;
+		}
+
+		paper-dialog paper-icon-button {
+			color: #3f51b5;
+			margin-right: 10px;
+		}
+
+		paper-dialog span {
+			float: left;
+			width: 100px;
+			padding-top: 10px;
+		}
+
+		paper-dialog paper-button {
 			background: #3f51b5;
 			color: #fff;
 		}
@@ -47,8 +76,47 @@
 			<paper-fab on-click="next" icon="arrow-forward"></paper-fab>
 		</div>
 
-		<settings-dialog id="dialog">
-		</settings-dialog>
+		<paper-dialog id="dialog">
+			<h2>Settings</h2>
+				<paper-dialog-scrollable>
+				  	<div class="vertical-section">
+						<div>Font</div>
+						<paper-radio-group selected="small">
+							<paper-radio-button name="small">Roberto</paper-radio-button>
+							<paper-radio-button name="medium">Serif</paper-radio-button>
+							<paper-radio-button name="large">Sans Serif</paper-radio-button>
+						</paper-radio-group>				
+						<div>Font Size</div>
+						<paper-slider class="blue" value="14" max="32" editable></paper-slider>
+
+						<div>
+							<span>Left Margin</span>
+							<paper-icon-button icon="add"></paper-icon-button>
+							<paper-icon-button icon="remove"></paper-icon-button>
+						</div>
+						<div>
+							<span>Right Margin</span>
+							<paper-icon-button icon="add"></paper-icon-button>
+							<paper-icon-button icon="remove"></paper-icon-button>
+						</div>
+						<div>
+							<span>Top Margin</span>
+							<paper-icon-button icon="add"></paper-icon-button>
+							<paper-icon-button icon="remove"></paper-icon-button>
+						</div>
+						<div>
+							<span>Bottom Margin</span>
+							<paper-icon-button icon="add"></paper-icon-button>
+							<paper-icon-button icon="remove"></paper-icon-button>
+						</div>
+					</div>
+
+				</paper-dialog-scrollable>
+			<div class="buttons">
+				<paper-button dialog-dismiss>Cancel</paper-button>
+				<paper-button dialog-confirm autofocus>OK</paper-button>
+			</div>
+		</paper-dialog>	
 	</template>
 
 	<script>
@@ -122,6 +190,10 @@
 
 			openSettingsDialog: function() {
 				this.$.dialog.open();
+			},
+
+			openFontDropDown: function() {
+				this.$.fontDropDown.open();
 			}
 		});
 	</script>
