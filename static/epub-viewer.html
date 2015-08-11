@@ -1,4 +1,5 @@
 <link rel="import" href="/static/bower_components/polymer/polymer.html">
+<link rel="import" href="/static/bower_components/paper-header-panel/paper-header-panel.html">
 <link rel="import" href="/static/bower_components/paper-toolbar/paper-toolbar.html">
 <link rel="import" href="/static/bower_components/paper-button/paper-button.html">
 <link rel="import" href="/static/bower_components/paper-icon-button/paper-icon-button.html">
@@ -25,7 +26,7 @@
 		}
 
 		#epubviewer {			
-	    	height: 600px;
+	 		height: 600px;
 	    	width: 100%;
 	    	border-width: 0px;
 	    }
@@ -63,60 +64,62 @@
 	</style>
 
 	<template>
-		<paper-toolbar>
-			<div class="title">Epub Reader</div>
-			<paper-button on-click="openSettingsDialog">
-				<paper-icon-button icon="settings"></paper-icon-button>
-			</paper-button>
-		</paper-toolbar>
 
-		<div id="body">
-			<paper-fab on-click="prev" icon="arrow-back"></paper-fab>
-			<iframe id="epubviewer"></iframe>
-			<paper-fab on-click="next" icon="arrow-forward"></paper-fab>
-		</div>
+			<paper-toolbar>
+				<div class="title">Epub Reader</div>
+				<paper-button on-click="openSettingsDialog">
+					<paper-icon-button icon="settings"></paper-icon-button>
+				</paper-button>
+			</paper-toolbar>
 
-		<paper-dialog id="dialog">
-			<h2>Settings</h2>
-				<paper-dialog-scrollable>
-				  	<div class="vertical-section">
-						<div>Font</div>
-						<paper-radio-group selected="small">
-							<paper-radio-button name="small">Roberto</paper-radio-button>
-							<paper-radio-button name="medium">Serif</paper-radio-button>
-							<paper-radio-button name="large">Sans Serif</paper-radio-button>
-						</paper-radio-group>				
-						<div>Font Size</div>
-						<paper-slider class="blue" value="14" max="32" editable></paper-slider>
-
-						<div>
-							<span>Left Margin</span>
-							<paper-icon-button icon="add"></paper-icon-button>
-							<paper-icon-button icon="remove"></paper-icon-button>
-						</div>
-						<div>
-							<span>Right Margin</span>
-							<paper-icon-button icon="add"></paper-icon-button>
-							<paper-icon-button icon="remove"></paper-icon-button>
-						</div>
-						<div>
-							<span>Top Margin</span>
-							<paper-icon-button icon="add"></paper-icon-button>
-							<paper-icon-button icon="remove"></paper-icon-button>
-						</div>
-						<div>
-							<span>Bottom Margin</span>
-							<paper-icon-button icon="add"></paper-icon-button>
-							<paper-icon-button icon="remove"></paper-icon-button>
-						</div>
-					</div>
-
-				</paper-dialog-scrollable>
-			<div class="buttons">
-				<paper-button dialog-dismiss>Cancel</paper-button>
-				<paper-button dialog-confirm autofocus>OK</paper-button>
+			<div id="body">
+				<paper-fab on-click="prev" icon="arrow-back"></paper-fab>
+				<iframe name="epubviewer" id="epubviewer"></iframe>
+				<paper-fab on-click="next" icon="arrow-forward"></paper-fab>
 			</div>
-		</paper-dialog>	
+
+			<paper-dialog id="dialog">
+				<h2>Settings </h2>
+					<paper-dialog-scrollable>
+					  	<div class="vertical-section">
+							<div>Font</div>
+							<paper-radio-group selected="{{fontFamily}}">
+								<paper-radio-button name="Roboto">Roboto</paper-radio-button>
+								<paper-radio-button name="Cursive">Cursive</paper-radio-button>
+								<paper-radio-button name="sans-serif">Sans Serif</paper-radio-button>
+							</paper-radio-group>				
+							<div>Font Size</div>
+							<paper-slider class="blue" value="{{fontSize}}" max="32" editable></paper-slider>
+
+							<div>
+								<span>Left Margin</span>
+								<paper-icon-button icon="add" on-click="incMarginLeft"></paper-icon-button>
+								<paper-icon-button icon="remove" on-click="decMarginLeft"></paper-icon-button>
+							</div>
+							<div>
+								<span>Right Margin</span>
+								<paper-icon-button icon="add" on-click="incMarginRight"></paper-icon-button>
+								<paper-icon-button icon="remove" on-click="decMarginRight"></paper-icon-button>
+							</div>
+							<div>
+								<span>Top Margin</span>
+								<paper-icon-button icon="add" on-click="incMarginTop"></paper-icon-button>
+								<paper-icon-button icon="remove" on-click="decMarginTop"></paper-icon-button>
+							</div>
+							<div>
+								<span>Bottom Margin</span>
+								<paper-icon-button icon="add" on-click="incMarginBottom"></paper-icon-button>
+								<paper-icon-button icon="remove" on-click="incMarginBottom"></paper-icon-button>
+							</div>
+						</div>
+
+					</paper-dialog-scrollable>
+				<div class="buttons">
+					<paper-button dialog-dismiss>Cancel</paper-button>
+					<paper-button dialog-confirm autofocus on-click="changeSettings">OK</paper-button>
+				</div>
+			</paper-dialog>	
+
 	</template>
 
 	<script>
@@ -129,6 +132,30 @@
 				href: {
 					type: String,
 					computed: 'computeHref(filename, src)'
+				},
+				fontFamily: {
+					type: String,
+					value: 'Roboto'
+				},
+				fontSize: {
+					type: Number,
+					value: 18
+				},
+				marginLeft: {
+					type: Number,
+					value: 20
+				},
+				marginRight: {
+					type: Number,
+					value: 20
+				},
+				marginTop: {
+					type: Number,
+					value: 20
+				},
+				marginBottom: {
+					type: Number,
+					value: 20
 				}
 			},
 
@@ -136,6 +163,20 @@
 				window.addEventListener('popstate', function() {
 
 				});
+
+				var that = this;
+				this.$.epubviewer.addEventListener('load', function() {
+					var y=(this.contentWindow || this.contentDocument);          
+					var x = y.document.getElementsByTagName('body');
+					x[0].style.fontFamily = that.fontFamily;
+					x[0].style.fontSize = that.fontSize + 'px';
+					x[0].style.marginLeft = that.marginLeft + 'px';
+					x[0].style.marginRight = that.marginRight + 'px';
+					x[0].style.marginTop = that.marginTop + 'px';
+					x[0].style.marginBottom = that.marginBottom + 'px';
+				});
+
+				console.log(this.$.epubviewer.contentWindow.document);
 			},
 
 			computeHref: function(filename, src) {
@@ -194,6 +235,49 @@
 
 			openFontDropDown: function() {
 				this.$.fontDropDown.open();
+			},
+
+			incMarginLeft: function() {
+				this.marginLeft += 10;
+			},
+
+			decMarginLeft: function() {
+				this.marginLeft -= 10;
+			},
+
+			incMarginRight: function() {
+				this.marginRight += 10;
+			},
+
+			decMarginRight: function() {
+				this.marginRight -= 10;
+			},
+
+			incMarginTop: function() {
+				this.marginTop += 10;
+			},
+
+			decMarginTop: function() {
+				this.marginTop -= 10;
+			},
+
+			incMarginBottom: function() {
+				this.marginBottom += 10;
+			},
+
+			decMarginBottom: function() {
+				this.marginBottom -= 10;
+			},
+
+			changeSettings: function() {
+				var y=(this.$.epubviewer.contentWindow || this.$.epubviewer.contentDocument);          
+				var x = y.document.getElementsByTagName('body');
+				x[0].style.fontFamily = this.fontFamily;
+				x[0].style.fontSize = this.fontSize + 'px';
+				x[0].style.marginLeft = this.marginLeft + 'px';
+				x[0].style.marginRight = this.marginRight + 'px';
+				x[0].style.marginTop = this.marginTop + 'px';
+				x[0].style.marginBottom = this.marginBottom + 'px';
 			}
 		});
 	</script>
