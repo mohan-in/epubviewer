@@ -73,9 +73,9 @@
 			</paper-toolbar>
 
 			<div id="body">
-				<paper-fab on-click="prev" icon="arrow-back"></paper-fab>
+				<paper-fab id="prevbtn" on-click="prev" icon="arrow-back"></paper-fab>
 				<iframe name="epubviewer" id="epubviewer"></iframe>
-				<paper-fab on-click="next" icon="arrow-forward"></paper-fab>
+				<paper-fab id="nextbtn" on-click="next" icon="arrow-forward"></paper-fab>
 			</div>
 
 			<paper-dialog id="dialog">
@@ -135,7 +135,7 @@
 				},
 				fontFamily: {
 					type: String,
-					value: 'Roboto'
+					value: 'Cursive'
 				},
 				fontSize: {
 					type: Number,
@@ -160,23 +160,34 @@
 			},
 
 			ready: function() {
-				window.addEventListener('popstate', function() {
-
+				window.addEventListener('popstate', function(e) {
+					console.log('back');
+					 //document.location = e.state;
 				});
 
 				var that = this;
-				this.$.epubviewer.addEventListener('load', function() {
-					var y=(this.contentWindow || this.contentDocument);          
-					var x = y.document.getElementsByTagName('body');
-					x[0].style.fontFamily = that.fontFamily;
-					x[0].style.fontSize = that.fontSize + 'px';
-					x[0].style.marginLeft = that.marginLeft + 'px';
-					x[0].style.marginRight = that.marginRight + 'px';
-					x[0].style.marginTop = that.marginTop + 'px';
-					x[0].style.marginBottom = that.marginBottom + 'px';
+
+				document.addEventListener('keydown', function(e) {
+					var evnt = new CustomEvent("click", { 'detail': 'Page navigation event' });
+					if (e.keyCode == '37') {
+						that.$.prevbtn.dispatchEvent(evnt);
+					} else if (e.keyCode == '39') {
+						that.$.nextbtn.dispatchEvent(evnt);
+					} else if (e.keyCode == '38' || e.keyCode == '40') {
+						that.$.epubviewer.focus();
+					}
 				});
 
-				console.log(this.$.epubviewer.contentWindow.document);
+				this.$.epubviewer.addEventListener('load', function() {
+					var y=(this.contentWindow || this.contentDocument);          
+					var x = y.document.querySelector('body');
+					x.style.fontFamily = that.fontFamily;
+					x.style.fontSize = that.fontSize + 'px';
+					x.style.marginLeft = that.marginLeft + 'px';
+					x.style.marginRight = that.marginRight + 'px';
+					x.style.marginTop = that.marginTop + 'px';
+					x.style.marginBottom = that.marginBottom + 'px';
+				});
 			},
 
 			computeHref: function(filename, src) {
@@ -271,13 +282,13 @@
 
 			changeSettings: function() {
 				var y=(this.$.epubviewer.contentWindow || this.$.epubviewer.contentDocument);          
-				var x = y.document.getElementsByTagName('body');
-				x[0].style.fontFamily = this.fontFamily;
-				x[0].style.fontSize = this.fontSize + 'px';
-				x[0].style.marginLeft = this.marginLeft + 'px';
-				x[0].style.marginRight = this.marginRight + 'px';
-				x[0].style.marginTop = this.marginTop + 'px';
-				x[0].style.marginBottom = this.marginBottom + 'px';
+				var x = y.document.querySelector('body');
+				x.style.fontFamily = this.fontFamily;
+				x.style.fontSize = this.fontSize + 'px';
+				x.style.marginLeft = this.marginLeft + 'px';
+				x.style.marginRight = this.marginRight + 'px';
+				x.style.marginTop = this.marginTop + 'px';
+				x.style.marginBottom = this.marginBottom + 'px';
 			}
 		});
 	</script>
