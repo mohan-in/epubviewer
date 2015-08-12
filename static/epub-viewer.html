@@ -167,19 +167,18 @@
 
 				var that = this;
 
-				document.addEventListener('keydown', function(e) {
-					var evnt = new CustomEvent("click", { 'detail': 'Page navigation event' });
-					if (e.keyCode == '37') {
-						that.$.prevbtn.dispatchEvent(evnt);
-					} else if (e.keyCode == '39') {
-						that.$.nextbtn.dispatchEvent(evnt);
-					} else if (e.keyCode == '38' || e.keyCode == '40') {
-						that.$.epubviewer.focus();
-					}
-				});
-
 				this.$.epubviewer.addEventListener('load', function() {
 					var y=(this.contentWindow || this.contentDocument);          
+
+					y.addEventListener('keydown', function(e) {
+						var evnt = new CustomEvent("click", { 'detail': 'Page navigation event' });
+						if (e.keyCode == '37') {
+							that.$.prevbtn.dispatchEvent(evnt);
+						} else if (e.keyCode == '39') {
+							that.$.nextbtn.dispatchEvent(evnt);
+						}
+					});
+
 					var x = y.document.querySelector('body');
 					x.style.fontFamily = that.fontFamily;
 					x.style.fontSize = that.fontSize + 'px';
@@ -188,6 +187,12 @@
 					x.style.marginTop = that.marginTop + 'px';
 					x.style.marginBottom = that.marginBottom + 'px';
 				});
+
+				document.addEventListener('click', function() {
+					that.$.epubviewer.focus();
+				});
+
+				this.$.epubviewer.focus();
 			},
 
 			computeHref: function(filename, src) {
