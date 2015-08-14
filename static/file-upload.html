@@ -26,7 +26,7 @@
 			align-items: center;
 		}
 
-		#upload {
+		#uploadbox {
 			display: flex;
 			height: 50px;
 			width: 800px;
@@ -64,25 +64,28 @@
 	</style>
 
 	<template>
-		<paper-toolbar>
-			<div class="title">Epub Reader</div>
-		</paper-toolbar>
+		<div id="container" fullbleed layout vertical>
+			<paper-header-panel class="flex">
+				<paper-toolbar>
+					<div class="title">Epub Reader</div>
+				</paper-toolbar>
 
-
-		<form id="epubuploadform" action="/upload" method="POST" enctype='multipart/form-data'>
-
-			<div id="upload">
-				<paper-button on-click="browseFile">
-					<iron-icon icon="search"></iron-icon>
-				</paper-button>
-				<paper-item id="filename"></paper-item>
-				<paper-button on-click="submitForm">
-					<iron-icon icon="file-upload"></iron-icon>
-				</paper-button>
-			</div>
-
-	    	<input type="file" id="epubupload" name="epubupload" on-change="changeName"></input>
-		</form>
+				<div id="content" class="fit">
+					<form id="epubuploadform" action="/upload" method="POST" enctype='multipart/form-data'>
+						<div id="uploadbox">
+							<paper-button on-click="browseFile">
+								<iron-icon icon="search"></iron-icon>
+							</paper-button>
+							<paper-item id="filename"></paper-item>
+							<paper-button on-click="submitForm">
+								<iron-icon icon="file-upload"></iron-icon>
+							</paper-button>
+						</div>
+				    	<input type="file" id="epubupload" name="epubupload" on-change="changeName"></input>
+					</form>
+				</div>
+			</paper-header-panel>
+		</div>
 	</template>
 
 	<script>
@@ -98,20 +101,22 @@
 			},
 
 			submitForm: function() {
+    			var xmlhttp = new XMLHttpRequest();
+    			xmlhttp.onreadystatechange = function() {
+        			if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
+           				if(xmlhttp.status == 200){
+               				document.location = JSON.parse(data).Href;
+           				} else {
+               				console.log('something else other than 200 was returned')
+           				}
+        			}
+    			}
+
 				var data = new FormData();
 				var that = this;
 				data.append("epubupload", this.$.epubupload.files[0])
-				jQuery.ajax({
-				    url: '/upload',
-				    data: data,
-				    cache: false,
-				    contentType: false,
-				    processData: false,
-				    type: 'POST',
-				    success: function(data){
-				    	document.location = JSON.parse(data).Href;
-				    }
-				});
+				xmlhttp.open("POST", "/upload", true);
+				xmlhttp.send(data);
 			}
 		});
 	</script>

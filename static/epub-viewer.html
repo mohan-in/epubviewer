@@ -15,7 +15,7 @@
 <dom-module id="epub-viewer">
 
 	<style>
-		#body, paper-dialog-scrollable {
+		#content, paper-dialog-scrollable {
 			display: flex;
 			justify-content: center;
 			align-items: center;
@@ -64,6 +64,7 @@
 
 		#container {
 			height: 100vh;
+			width: 100hh;
 		}
 	</style>
 
@@ -78,57 +79,55 @@
 					</paper-button>
 				</paper-toolbar>
 
-				<div id="body" class="fit">
+				<div id="content" class="fit">
 					<paper-fab id="prevbtn" on-click="prev" icon="arrow-back"></paper-fab>
 					<iframe name="epubviewer" id="epubviewer"></iframe>
 					<paper-fab id="nextbtn" on-click="next" icon="arrow-forward"></paper-fab>
 				</div>
 			</paper-header-panel>
 
-
 		</div>
 
-			<paper-dialog id="dialog">
-				<h2>Settings </h2>
-					<paper-dialog-scrollable>
-					  	<div class="vertical-section">
-							<div>Font</div>
-							<paper-radio-group selected="{{fontFamily}}">
-								<paper-radio-button name="Roboto">Roboto</paper-radio-button>
-								<paper-radio-button name="Cursive">Cursive</paper-radio-button>
-								<paper-radio-button name="sans-serif">Sans Serif</paper-radio-button>
-							</paper-radio-group>				
-							<div>Font Size</div>
-							<paper-slider class="blue" value="{{fontSize}}" max="32" editable></paper-slider>
+		<paper-dialog id="dialog">
+			<h2>Settings </h2>
+				<paper-dialog-scrollable>
+				  	<div class="vertical-section">
+						<div>Font</div>
+						<paper-radio-group selected="{{fontFamily}}">
+							<paper-radio-button name="Roboto">Roboto</paper-radio-button>
+							<paper-radio-button name="Cursive">Cursive</paper-radio-button>
+							<paper-radio-button name="sans-serif">Sans Serif</paper-radio-button>
+						</paper-radio-group>				
+						<div>Font Size</div>
+						<paper-slider class="blue" value="{{fontSize}}" max="32" editable></paper-slider>
 
-							<div>
-								<span>Left Margin</span>
-								<paper-icon-button icon="add" on-click="incMarginLeft"></paper-icon-button>
-								<paper-icon-button icon="remove" on-click="decMarginLeft"></paper-icon-button>
-							</div>
-							<div>
-								<span>Right Margin</span>
-								<paper-icon-button icon="add" on-click="incMarginRight"></paper-icon-button>
-								<paper-icon-button icon="remove" on-click="decMarginRight"></paper-icon-button>
-							</div>
-							<div>
-								<span>Top Margin</span>
-								<paper-icon-button icon="add" on-click="incMarginTop"></paper-icon-button>
-								<paper-icon-button icon="remove" on-click="decMarginTop"></paper-icon-button>
-							</div>
-							<div>
-								<span>Bottom Margin</span>
-								<paper-icon-button icon="add" on-click="incMarginBottom"></paper-icon-button>
-								<paper-icon-button icon="remove" on-click="incMarginBottom"></paper-icon-button>
-							</div>
+						<div>
+							<span>Left Margin</span>
+							<paper-icon-button icon="add" on-click="incMarginLeft"></paper-icon-button>
+							<paper-icon-button icon="remove" on-click="decMarginLeft"></paper-icon-button>
 						</div>
-
-					</paper-dialog-scrollable>
-				<div class="buttons">
-					<paper-button dialog-dismiss>Cancel</paper-button>
-					<paper-button dialog-confirm autofocus on-click="changeSettings">OK</paper-button>
-				</div>
-			</paper-dialog>	
+						<div>
+							<span>Right Margin</span>
+							<paper-icon-button icon="add" on-click="incMarginRight"></paper-icon-button>
+							<paper-icon-button icon="remove" on-click="decMarginRight"></paper-icon-button>
+						</div>
+						<div>
+							<span>Top Margin</span>
+							<paper-icon-button icon="add" on-click="incMarginTop"></paper-icon-button>
+							<paper-icon-button icon="remove" on-click="decMarginTop"></paper-icon-button>
+						</div>
+						<div>
+							<span>Bottom Margin</span>
+							<paper-icon-button icon="add" on-click="incMarginBottom"></paper-icon-button>
+							<paper-icon-button icon="remove" on-click="incMarginBottom"></paper-icon-button>
+						</div>
+					</div>
+				</paper-dialog-scrollable>
+			<div class="buttons">
+				<paper-button dialog-dismiss>Cancel</paper-button>
+				<paper-button dialog-confirm autofocus on-click="changeSettings">OK</paper-button>
+			</div>
+		</paper-dialog>	
 
 	</template>
 
@@ -198,7 +197,7 @@
 					x.style.marginBottom = that.marginBottom + 'px';
 				});
 
-				this.$.body.addEventListener('click', function() {
+				this.$.content.addEventListener('click', function() {
 					that.$.epubviewer.focus();
 				});
 
