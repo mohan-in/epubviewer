@@ -12,6 +12,8 @@
 <link rel="import" href="/static/bower_components/paper-radio-button/paper-radio-button.html">
 <link rel="import" href="/static/bower_components/paper-slider/paper-slider.html">
 
+<link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+
 <dom-module id="epub-viewer">
 
 	<style>
@@ -222,36 +224,46 @@
 
 			next: function() {
 				var that = this;
-				jQuery.ajax({
-				    url: '/nextpage',
-				    data: {
-				    	bookname: that.filename,
-				    	href: that.$.epubviewer.contentWindow.location.pathname
-				    },
-				    type: 'POST',
-				    success: function(data){
-				    	that.src =  JSON.parse(data).Href;
-				    	history.pushState(null, null, that.href);
-				    	that.$.epubviewer.src = '/' + that.src;
-				    }
-				});
+
+				var xhr = new XMLHttpRequest();
+    			xhr.onreadystatechange = function() {
+        			if (xhr.readyState == XMLHttpRequest.DONE) {
+           				if(xhr.status == 200){
+               				that.src =  JSON.parse(xhr.response).Href;
+				    		history.pushState(null, null, that.href);
+				    		that.$.epubviewer.src = '/' + that.src;
+           				}
+        			}
+    			}
+
+				var data = new FormData();
+				data.append('bookname', this.filename);
+				data.append('href', this.$.epubviewer.contentWindow.location.pathname);
+
+    			xhr.open('POST', '/nextpage');
+				xhr.send(data);
 			},
 
 			prev: function() {
 				var that = this;
-				jQuery.ajax({
-				    url: '/prevpage',
-				    data: {
-				    	bookname: that.filename,
-				    	href: that.$.epubviewer.contentWindow.location.pathname
-				    },
-				    type: 'POST',
-				    success: function(data){
-				    	that.src =  JSON.parse(data).Href;
-				    	history.pushState(null, null, that.href);
-				    	that.$.epubviewer.src = '/' + that.src;
-				    }
-				});
+
+				var xhr = new XMLHttpRequest();
+    			xhr.onreadystatechange = function() {
+        			if (xhr.readyState == XMLHttpRequest.DONE) {
+           				if(xhr.status == 200){
+               				that.src =  JSON.parse(xhr.response).Href;
+				    		history.pushState(null, null, that.href);
+				    		that.$.epubviewer.src = '/' + that.src;
+           				}
+        			}
+    			}
+
+				var data = new FormData();
+				data.append('bookname', this.filename);
+				data.append('href', this.$.epubviewer.contentWindow.location.pathname);
+
+    			xhr.open('POST', '/prevpage');
+				xhr.send(data);
 			},
 
 			openSettingsDialog: function() {

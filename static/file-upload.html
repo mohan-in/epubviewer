@@ -90,7 +90,7 @@
 
 	<script>
 		Polymer({
-			is: "file-upload",
+			is: 'file-upload',
 
 			browseFile: function() {
 				this.$.epubupload.click();
@@ -101,10 +101,10 @@
 			},
 
 			submitForm: function() {
-    			var xmlhttp = new XMLHttpRequest();
+    			var xhr = new XMLHttpRequest();
     			xmlhttp.onreadystatechange = function() {
-        			if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
-           				if(xmlhttp.status == 200){
+        			if (xhr.readyState == XMLHttpRequest.DONE) {
+           				if(xhr.status == 200){
                				document.location = JSON.parse(data).Href;
            				} else {
                				console.log('something else other than 200 was returned')
@@ -113,10 +113,9 @@
     			}
 
 				var data = new FormData();
-				var that = this;
-				data.append("epubupload", this.$.epubupload.files[0])
-				xmlhttp.open("POST", "/upload", true);
-				xmlhttp.send(data);
+				data.append('epubupload', this.$.epubupload.files[0]);
+				xhr.open('POST', '/upload');
+				xhr.send(data);
 			}
 		});
 	</script>
