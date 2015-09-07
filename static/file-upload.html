@@ -7,6 +7,8 @@
 
 <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
 
+<script src="/static/ajax.js"></script>
+
 <dom-module id="file-upload">
 
 	<style>
@@ -101,21 +103,19 @@
 			},
 
 			submitForm: function() {
-    			var xhr = new XMLHttpRequest();
-    			xmlhttp.onreadystatechange = function() {
-        			if (xhr.readyState == XMLHttpRequest.DONE) {
-           				if(xhr.status == 200){
-               				document.location = JSON.parse(data).Href;
-           				} else {
-               				console.log('something else other than 200 was returned')
-           				}
-        			}
-    			}
-
-				var data = new FormData();
-				data.append('epubupload', this.$.epubupload.files[0]);
-				xhr.open('POST', '/upload');
-				xhr.send(data);
+				ajax({
+					method: 'POST',
+					url: '/upload',
+					data: {
+						epubupload: this.$.epubupload.files[0]
+					},
+					success: function(response) {
+						document.location = JSON.parse(response).Href;
+					},
+					error: function() {
+						console.log('unable to upload file');
+					}
+				});
 			}
 		});
 	</script>
