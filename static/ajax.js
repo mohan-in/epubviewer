@@ -3,9 +3,13 @@ function ajax(o) {
     xhr.onreadystatechange = function() {
         if (xhr.readyState == XMLHttpRequest.DONE) {
             if(xhr.status == 200){
-                o.success(xhr.response);
+                if(o.success != null) {
+                    o.success(xhr.response);
+                }
             } else {
-                o.error();
+                if(o.error != null) {
+                    o.error();
+                }
             }
         }
     }
