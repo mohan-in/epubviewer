@@ -146,11 +146,5 @@ func main() {
 	http.HandleFunc("/epubviewer/", epubViewerHandler)
 	http.HandleFunc("/nextpage", nextPageHandler)
 	http.HandleFunc("/prevpage", prevPageHandler)
-
-	defer func() {
-		err := recover()
-		log.Println(err)
-	}()
-
 	http.ListenAndServe(":9090", nil)
 }
