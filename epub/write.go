@@ -1,7 +1,6 @@
 package epub
 
 import (
-	"archive/zip"
 	"golang.org/x/tools/godoc/vfs"
 	"golang.org/x/tools/godoc/vfs/zipfs"
 	"io"
@@ -13,13 +12,10 @@ func (e *Ebook) WriteToc(w io.Writer) error {
 
 func (e *Ebook) WriteFile(w io.Writer, path string) error {
 
-	r, err := zip.OpenReader(e.name)
-	if err != nil {
-		return err
-	}
+	r := cache[e.Name]
 	defer r.Close()
 
-	fs := zipfs.New(r, e.name)
+	fs := zipfs.New(r, e.Name)
 
 	if e.isOEBPS {
 		path = "/OEBPS" + path

@@ -216,7 +216,8 @@
 				}
 				document.cookie = 'bookname=' + this.filename +';path=/';
 				history.pushState(null, null, this.href);
-				this.$.epubviewer.src = 'http://localhost:9090/' + this.src;
+				this.$.epubviewer.src = 'http://' + document.location.hostname + ':' + 
+													document.location.port + '/' + this.src;
 			},
 
 			next: function() {

@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"github.com/gocode/epubviewer/epub"
-	"io"
 	"log"
 	"net/http"
 	"os"
@@ -16,6 +15,14 @@ var (
 
 func init() {
 	logger = log.New(os.Stdout, "epubviewer ", log.Lshortfile)
+
+	http.HandleFunc("/", spineHandler)
+	http.HandleFunc("/static/", staticFilesHandler)
+	http.HandleFunc("/upload", uploadHandler)
+	http.HandleFunc("/toc", tocHandler)
+	http.HandleFunc("/epubviewer/", epubViewerHandler)
+	http.HandleFunc("/nextpage", nextPageHandler)
+	http.HandleFunc("/prevpage", prevPageHandler)
 }
 
 func uploadHandler(rw http.ResponseWriter, req *http.Request) {
@@ -31,19 +38,9 @@ func uploadHandler(rw http.ResponseWriter, req *http.Request) {
 
 	dstFileName := strings.Replace(header.Filename, " ", "_", -1)
 
-	dstFile, err := os.Create(".files/" + dstFileName)
-	if err != nil {
-		logger.Println(err)
-		rw.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	defer dstFile.Close()
+	e := epub.New(dstFileName)
 
-	io.Copy(dstFile, srcFile)
-
-	e := epub.New(".files/" + dstFileName)
-
-	if err := e.Load(); err != nil {
+	if err := e.Load(srcFile); err != nil {
 		logger.Println(err)
 		rw.WriteHeader(http.StatusInternalServerError)
 		return
@@ -59,9 +56,9 @@ func uploadHandler(rw http.ResponseWriter, req *http.Request) {
 }
 
 func tocHandler(rw http.ResponseWriter, req *http.Request) {
-	e := epub.New(".files/" + req.FormValue("bookname"))
+	e := epub.New(req.FormValue("bookname"))
 
-	if err := e.Load(); err != nil {
+	if err := e.LoadFromCache(); err != nil {
 		logger.Println(err)
 		rw.WriteHeader(http.StatusInternalServerError)
 		return
@@ -71,9 +68,9 @@ func tocHandler(rw http.ResponseWriter, req *http.Request) {
 }
 
 func nextPageHandler(rw http.ResponseWriter, req *http.Request) {
-	e := epub.New(".files/" + req.FormValue("bookname"))
+	e := epub.New(req.FormValue("bookname"))
 
-	if err := e.Load(); err != nil {
+	if err := e.LoadFromCache(); err != nil {
 		logger.Println(err)
 		rw.WriteHeader(http.StatusInternalServerError)
 		return
@@ -90,9 +87,9 @@ func nextPageHandler(rw http.ResponseWriter, req *http.Request) {
 }
 
 func prevPageHandler(rw http.ResponseWriter, req *http.Request) {
-	e := epub.New(".files/" + req.FormValue("bookname"))
+	e := epub.New(req.FormValue("bookname"))
 
-	if err := e.Load(); err != nil {
+	if err := e.LoadFromCache(); err != nil {
 		logger.Println(err)
 		rw.WriteHeader(http.StatusInternalServerError)
 		return
@@ -115,9 +112,9 @@ func spineHandler(rw http.ResponseWriter, req *http.Request) {
 	}
 
 	c, _ := req.Cookie("bookname")
-	e := epub.New(".files/" + c.Value)
+	e := epub.New(c.Value)
 
-	if err := e.Load(); err != nil {
+	if err := e.LoadFromCache(); err != nil {
 		logger.Println(err)
 		rw.WriteHeader(http.StatusInternalServerError)
 		return
@@ -136,15 +133,4 @@ func epubViewerHandler(rw http.ResponseWriter, req *http.Request) {
 
 func staticFilesHandler(rw http.ResponseWriter, req *http.Request) {
 	http.ServeFile(rw, req, req.URL.Path[1:])
-}
-
-func main() {
-	http.HandleFunc("/", spineHandler)
-	http.HandleFunc("/static/", staticFilesHandler)
-	http.HandleFunc("/upload", uploadHandler)
-	http.HandleFunc("/toc", tocHandler)
-	http.HandleFunc("/epubviewer/", epubViewerHandler)
-	http.HandleFunc("/nextpage", nextPageHandler)
-	http.HandleFunc("/prevpage", prevPageHandler)
-	http.ListenAndServe(":9090", nil)
 }

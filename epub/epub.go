@@ -1,7 +1,7 @@
 package epub
 
 type Ebook struct {
-	name    string
+	Name    string
 	opf     opf
 	ncx     ncx
 	tocPath string
@@ -9,7 +9,7 @@ type Ebook struct {
 }
 
 func New(name string) *Ebook {
-	return &Ebook{name: name}
+	return &Ebook{Name: name}
 }
 
 func (e *Ebook) GetToc() string {

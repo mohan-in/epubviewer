@@ -5,17 +5,38 @@ import (
 	"encoding/xml"
 	"golang.org/x/tools/godoc/vfs"
 	"golang.org/x/tools/godoc/vfs/zipfs"
+	"io"
 )
 
-func (e *Ebook) Load() error {
+func (e *Ebook) Load(reader io.ReaderAt) error {
 
-	r, err := zip.OpenReader(e.name)
-	if err != nil {
-		return err
+	var size int64
+	for {
+		p := make([]byte, 1)
+		n, _ := reader.ReadAt(p, size)
+		size = size + int64(n)
+		if n == 0 {
+			break
+		}
 	}
-	defer r.Close()
 
-	fs := zipfs.New(r, e.name)
+	r, _ := zip.NewReader(reader, size)
+
+	rc := new(zip.ReadCloser)
+	rc.Reader = *r
+
+	cache[e.Name] = rc
+
+	return e.load(rc)
+}
+
+func (e *Ebook) LoadFromCache() error {
+	rc := cache[e.Name]
+	return e.load(rc)
+}
+
+func (e *Ebook) load(rc *zip.ReadCloser) error {
+	fs := zipfs.New(rc, e.Name)
 
 	//read .opf file
 	if err := e.loadOpf(fs); err != nil {
