@@ -25,6 +25,17 @@ func (e *Ebook) Load(reader io.ReaderAt) error {
 	rc := new(zip.ReadCloser)
 	rc.Reader = *r
 
+	cache[e.Name] = rc
+
+	return e.load(rc)
+}
+
+func (e *Ebook) LoadFromCache() error {
+	rc := cache[e.Name]
+	return e.load(rc)
+}
+
+func (e *Ebook) load(rc *zip.ReadCloser) error {
 	fs := zipfs.New(rc, e.Name)
 
 	//read .opf file

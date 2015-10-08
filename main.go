@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"github.com/gocode/epubviewer/epub"
-	"google.golang.org/appengine"
 	"log"
 	"net/http"
 	"os"
@@ -39,9 +38,6 @@ func uploadHandler(rw http.ResponseWriter, req *http.Request) {
 
 	dstFileName := strings.Replace(header.Filename, " ", "_", -1)
 
-	ctx := appengine.NewContext(req)
-	epub.AddToCache(ctx, dstFileName, srcFile)
-
 	e := epub.New(dstFileName)
 
 	if err := e.Load(srcFile); err != nil {
@@ -62,10 +58,7 @@ func uploadHandler(rw http.ResponseWriter, req *http.Request) {
 func tocHandler(rw http.ResponseWriter, req *http.Request) {
 	e := epub.New(req.FormValue("bookname"))
 
-	ctx := appengine.NewContext(req)
-	r := epub.GetFromCache(ctx, req.FormValue("bookname"))
-
-	if err := e.Load(r); err != nil {
+	if err := e.LoadFromCache(); err != nil {
 		logger.Println(err)
 		rw.WriteHeader(http.StatusInternalServerError)
 		return
@@ -77,10 +70,7 @@ func tocHandler(rw http.ResponseWriter, req *http.Request) {
 func nextPageHandler(rw http.ResponseWriter, req *http.Request) {
 	e := epub.New(req.FormValue("bookname"))
 
-	ctx := appengine.NewContext(req)
-	r := epub.GetFromCache(ctx, req.FormValue("bookname"))
-
-	if err := e.Load(r); err != nil {
+	if err := e.LoadFromCache(); err != nil {
 		logger.Println(err)
 		rw.WriteHeader(http.StatusInternalServerError)
 		return
@@ -99,10 +89,7 @@ func nextPageHandler(rw http.ResponseWriter, req *http.Request) {
 func prevPageHandler(rw http.ResponseWriter, req *http.Request) {
 	e := epub.New(req.FormValue("bookname"))
 
-	ctx := appengine.NewContext(req)
-	r := epub.GetFromCache(ctx, req.FormValue("bookname"))
-
-	if err := e.Load(r); err != nil {
+	if err := e.LoadFromCache(); err != nil {
 		logger.Println(err)
 		rw.WriteHeader(http.StatusInternalServerError)
 		return
@@ -127,10 +114,7 @@ func spineHandler(rw http.ResponseWriter, req *http.Request) {
 	c, _ := req.Cookie("bookname")
 	e := epub.New(c.Value)
 
-	ctx := appengine.NewContext(req)
-	r := epub.GetFromCache(ctx, req.FormValue("bookname"))
-
-	if err := e.Load(r); err != nil {
+	if err := e.LoadFromCache(); err != nil {
 		logger.Println(err)
 		rw.WriteHeader(http.StatusInternalServerError)
 		return
@@ -149,8 +133,4 @@ func epubViewerHandler(rw http.ResponseWriter, req *http.Request) {
 
 func staticFilesHandler(rw http.ResponseWriter, req *http.Request) {
 	http.ServeFile(rw, req, req.URL.Path[1:])
-}
-
-func main() {
-	http.ListenAndServe(":8080", nil)
 }
