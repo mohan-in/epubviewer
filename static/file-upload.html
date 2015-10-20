@@ -103,6 +103,8 @@
 			},
 
 			submitForm: function() {
+				var container = this.$.container;
+				container.style.cursor = 'wait';
 				ajax({
 					method: 'POST',
 					url: '/upload',
@@ -111,9 +113,11 @@
 					},
 					success: function(response) {
 						document.location = JSON.parse(response).Href;
+						container.style.cursor = 'auto';
 					},
 					error: function() {
 						console.log('unable to upload file');
+						container.style.cursor = 'auto';
 					}
 				});
 			}

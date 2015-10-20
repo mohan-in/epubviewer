@@ -134,3 +134,7 @@ func epubViewerHandler(rw http.ResponseWriter, req *http.Request) {
 func staticFilesHandler(rw http.ResponseWriter, req *http.Request) {
 	http.ServeFile(rw, req, req.URL.Path[1:])
 }
+
+func main() {
+	http.ListenAndServe(":8080", nil)
+}
