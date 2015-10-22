@@ -25,13 +25,13 @@ func (e *Ebook) Load(reader io.ReaderAt) error {
 	rc := new(zip.ReadCloser)
 	rc.Reader = *r
 
-	cache[e.Name] = rc
+	Cache[e.Name] = rc
 
 	return e.load(rc)
 }
 
 func (e *Ebook) LoadFromCache() error {
-	rc := cache[e.Name]
+	rc := Cache[e.Name]
 	return e.load(rc)
 }
 

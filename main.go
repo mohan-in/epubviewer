@@ -23,6 +23,7 @@ func init() {
 	http.HandleFunc("/epubviewer/", epubViewerHandler)
 	http.HandleFunc("/nextpage", nextPageHandler)
 	http.HandleFunc("/prevpage", prevPageHandler)
+	http.HandleFunc("/filelist", filelistHandler)
 }
 
 func uploadHandler(rw http.ResponseWriter, req *http.Request) {
@@ -121,6 +122,26 @@ func spineHandler(rw http.ResponseWriter, req *http.Request) {
 	}
 
 	e.WriteFile(rw, req.URL.Path)
+}
+
+func filelistHandler(rw http.ResponseWriter, req *http.Request) {
+	type file struct {
+		Name string
+		Href string
+	}
+
+	response := make([]file, len(epub.Cache))
+
+	i := 0
+	for name, _ := range epub.Cache {
+		e := epub.New(name)
+		response[i].Name = name
+		response[i].Href = "/epubviewer/" + name + e.GetToc()
+		i++
+	}
+
+	enc := json.NewEncoder(rw)
+	enc.Encode(response)
 }
 
 func indexHandler(rw http.ResponseWriter, req *http.Request) {

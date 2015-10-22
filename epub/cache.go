@@ -4,14 +4,8 @@ import (
 	"archive/zip"
 )
 
-type Cache map[string]*zip.ReadCloser
-
-var (
-	cache    Cache
-	useCache bool
-)
+var Cache map[string]*zip.ReadCloser
 
 func init() {
-	cache = make(map[string]*zip.ReadCloser)
-	useCache = true
+	Cache = make(map[string]*zip.ReadCloser)
 }

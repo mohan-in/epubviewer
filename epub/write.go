@@ -12,7 +12,7 @@ func (e *Ebook) WriteToc(w io.Writer) error {
 
 func (e *Ebook) WriteFile(w io.Writer, path string) error {
 
-	r := cache[e.Name]
+	r := Cache[e.Name]
 	defer r.Close()
 
 	fs := zipfs.New(r, e.Name)

@@ -1,0 +1,47 @@
+<link rel="import" href="/static/bower_components/polymer/polymer.html">
+<link rel="import" href="/static/bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="/static/bower_components/paper-item/paper-item.html">
+
+<link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+
+<script src="/static/ajax.js"></script>
+
+<dom-module id="file-list">
+	<style>
+		paper-item:hover {
+			cursor: pointer;
+		}
+	</style>
+
+	<template>
+		<paper-toolbar>
+			<div class="title">Epub Reader - File List</div>
+		</paper-toolbar>
+
+		<template is="dom-repeat" items="[[Files]]">
+			<paper-item>[[item.Name]]</paper-item>
+		</template>
+	</template>
+
+	<script>
+		Polymer({
+			properties: {
+				Files: Array
+			},
+
+			ready: function() {
+				var that = this;
+				ajax({
+					method: 'GET',
+					url: '/filelist',
+					success: function(response) {
+						that.Files = JSON.parse(response);
+					},
+					error: function() {
+						console.log('unable to get file list');
+					}
+				});
+			}
+		});
+	</script>
+</dom-module>
