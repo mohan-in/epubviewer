@@ -135,7 +135,14 @@ func filelistHandler(rw http.ResponseWriter, req *http.Request) {
 	i := 0
 	for name, _ := range epub.Cache {
 		e := epub.New(name)
-		response[i].Name = name
+
+		if err := e.LoadFromCache(); err != nil {
+			logger.Println(err)
+			rw.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		response[i].Name = strings.Replace(name, "_", " ", -1)
 		response[i].Href = "/epubviewer/" + name + e.GetToc()
 		i++
 	}

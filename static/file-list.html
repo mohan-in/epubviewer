@@ -1,6 +1,9 @@
 <link rel="import" href="/static/bower_components/polymer/polymer.html">
 <link rel="import" href="/static/bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="/static/bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="/static/bower_components/paper-item/paper-item.html">
+<link rel="import" href="/static/bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="/static/bower_components/iron-icon/iron-icon.html">
 
 <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
 
@@ -8,18 +11,36 @@
 
 <dom-module id="file-list">
 	<style>
+		a {
+			text-decoration: none;
+		}
+
+		paper-toolbar {
+			text-align: center;
+		}
+
 		paper-item:hover {
 			cursor: pointer;
+		}
+
+		iron-icon {
+			color: grey;
 		}
 	</style>
 
 	<template>
 		<paper-toolbar>
+			<paper-icon-button icon="file-upload" on-click="gotoFileUpload"></paper-icon-button>
 			<div class="title">Epub Reader - File List</div>
 		</paper-toolbar>
 
 		<template is="dom-repeat" items="[[Files]]">
-			<paper-item>[[item.Name]]</paper-item>
+			<a href=[[item.Href]]>
+				<paper-item>
+					<iron-icon icon="description"></iron-icon>
+					<paper-item-body>[[item.Name]]</paper-item-body>
+				</paper-item>
+			</a>
 		</template>
 	</template>
 
@@ -41,6 +62,10 @@
 						console.log('unable to get file list');
 					}
 				});
+			},
+
+			gotoFileUpload: function() {
+				document.location = '/static/index.html';
 			}
 		});
 	</script>

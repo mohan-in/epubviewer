@@ -74,13 +74,12 @@
 
 	<template>
 		<div id="container" fullbleed layout vertical>
-			
 			<paper-header-panel class="flex">
 				<paper-toolbar>
+					<paper-icon-button icon="file-upload" on-click="gotoFileUpload"></paper-icon-button>
+					<paper-icon-button icon="view-list" on-click="gotoFileList"></paper-icon-button>
 					<div class="title">Epub Reader</div>
-					<paper-button on-click="openSettingsDialog">
-						<paper-icon-button icon="settings"></paper-icon-button>
-					</paper-button>
+					<paper-icon-button icon="settings" on-click="openSettingsDialog"></paper-icon-button>
 				</paper-toolbar>
 
 				<div id="content" class="fit">
@@ -89,7 +88,6 @@
 					<paper-fab id="nextbtn" on-click="next" icon="arrow-forward"></paper-fab>
 				</div>
 			</paper-header-panel>
-
 		</div>
 
 		<paper-dialog id="dialog">
@@ -303,6 +301,14 @@
 				x.style.marginRight = this.marginRight + 'px';
 				x.style.marginTop = this.marginTop + 'px';
 				x.style.marginBottom = this.marginBottom + 'px';
+			},
+
+			gotoFileList: function() {
+				document.location = '/static/filelist.html';
+			},
+
+			gotoFileUpload: function() {
+				document.location = '/static/index.html';
 			}
 		});
 	</script>
