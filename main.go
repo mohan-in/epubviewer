@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"path"
 )
 
 var (
@@ -51,7 +52,7 @@ func uploadHandler(rw http.ResponseWriter, req *http.Request) {
 		Href string
 	}
 
-	page := "/epubviewer/" + dstFileName + e.GetToc()
+	page := path.Join("epubviewer", dstFileName, e.GetToc())
 	buf, _ := json.Marshal(nextPage{page})
 	rw.Write(buf)
 }
@@ -143,7 +144,7 @@ func filelistHandler(rw http.ResponseWriter, req *http.Request) {
 		}
 
 		response[i].Name = strings.Replace(name, "_", " ", -1)
-		response[i].Href = "/epubviewer/" + name + e.GetToc()
+		response[i].Href = path.Join("epubviewer", name, e.GetToc())
 		i++
 	}
 
