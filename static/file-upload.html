@@ -5,6 +5,8 @@
 <link rel="import" href="/static/bower_components/paper-button/paper-button.html">
 <link rel="import" href="/static/bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="/static/bower_components/iron-form/iron-form.html">
+<link rel="import" href="/static/bower_components/iron-flex-layout/iron-flex-layout.html">
+
 
 <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
 
@@ -13,11 +15,6 @@
 <dom-module id="file-upload">
 
 	<style>
-		#container {
-			height: 100vh;
-	    	width: 100%;
-		}
-
 		paper-toolbar {
 			text-align: center;
 		}
@@ -67,29 +64,27 @@
 	</style>
 
 	<template>
-		<div id="container" fullbleed layout vertical>
-			<paper-header-panel class="flex">
-				<paper-toolbar>
-					<paper-icon-button icon="view-list" on-click="gotoFileList"></paper-icon-button>
-					<div class="title">Epub Reader</div>
-				</paper-toolbar>
+		<paper-header-panel>
+			<paper-toolbar>
+				<paper-icon-button icon="view-list" on-click="gotoFileList"></paper-icon-button>
+				<div class="title">Epub Reader</div>
+			</paper-toolbar>
 
-				<div id="content" class="fit">
-					<form id="epubuploadform" action="/upload" method="POST" enctype='multipart/form-data'>
-						<div id="uploadbox">
-							<paper-button on-click="browseFile">
-								<iron-icon icon="search"></iron-icon>
-							</paper-button>
-							<paper-item id="filename"></paper-item>
-							<paper-button on-click="submitForm">
-								<iron-icon icon="file-upload"></iron-icon>
-							</paper-button>
-						</div>
-				    	<input type="file" id="epubupload" name="epubupload" on-change="changeName"></input>
-					</form>
-				</div>
-			</paper-header-panel>
-		</div>
+			<div>
+				<form id="epubuploadform" action="/upload" method="POST" enctype='multipart/form-data'>
+					<div id="uploadbox">
+						<paper-button on-click="browseFile">
+							<iron-icon icon="search"></iron-icon>
+						</paper-button>
+						<paper-item id="filename"></paper-item>
+						<paper-button on-click="submitForm">
+							<iron-icon icon="file-upload"></iron-icon>
+						</paper-button>
+					</div>
+			    	<input type="file" id="epubupload" name="epubupload" on-change="changeName"></input>
+				</form>
+			</div>
+		</paper-header-panel>
 	</template>
 
 	<script>
@@ -106,7 +101,7 @@
 
 			submitForm: function() {
 				var container = this.$.container;
-				container.style.cursor = 'wait';
+				this.style.cursor = 'wait';
 				ajax({
 					method: 'POST',
 					url: '/upload',
@@ -125,7 +120,7 @@
 			},
 
 			gotoFileList: function() {
-				document.location = '/static/filelist.html';
+				document.location = '/';
 			}
 		});
 	</script>
