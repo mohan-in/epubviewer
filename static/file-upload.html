@@ -6,7 +6,7 @@
 <link rel="import" href="/static/bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="/static/bower_components/iron-form/iron-form.html">
 <link rel="import" href="/static/bower_components/iron-flex-layout/iron-flex-layout.html">
-
+<link rel="import" href="/static/bower_components/iron-flex-layout/classes/iron-flex-layout.html">
 
 <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
 
@@ -15,38 +15,30 @@
 <dom-module id="file-upload">
 
 	<style>
-		paper-toolbar {
+		.title {
 			text-align: center;
 		}
 
-		form {
-			height: 500px;
-			display: flex;
-			justify-content: center;
-			align-items: center;
+		#content {
+			@apply(--layout-horizontal);
+			@apply(--layout-center);
+      		@apply(--layout-center-justified);
 		}
 
 		#uploadbox {
 			display: flex;
-			height: 50px;
-			width: 800px;
-			margin: 5px;
 		}
 
 		paper-button {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			width: 100px;	
 			margin: 0px;
 			background: #3f51b5;
 			color: #fff;
 		}
 
 		paper-item {
-			display: flex;
-			justify-content: center;
-			align-items: center;
+			@apply(--layout-horizontal);
+			@apply(--layout-center);
+      		@apply(--layout-center-justified);
 			border-top-style: solid;
 			border-bottom-style: solid;
 			border-width: 1px;
@@ -70,7 +62,7 @@
 				<div class="title">Epub Reader</div>
 			</paper-toolbar>
 
-			<div>
+			<div id="content" class="fit">
 				<form id="epubuploadform" action="/upload" method="POST" enctype='multipart/form-data'>
 					<div id="uploadbox">
 						<paper-button on-click="browseFile">

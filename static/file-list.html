@@ -11,20 +11,17 @@
 
 <dom-module id="file-list">
 	<style>
-		a {
-			text-decoration: none;
-		}
-
-		paper-toolbar {
+		.title {
 			text-align: center;
 		}
 
-		paper-item:hover {
-			cursor: pointer;
+		.file {
+			text-decoration: none;
+			color: grey;
 		}
 
-		iron-icon {
-			color: grey;
+		.file:hover {
+			cursor: pointer;
 		}
 	</style>
 
@@ -35,7 +32,7 @@
 		</paper-toolbar>
 
 		<template is="dom-repeat" items="[[Files]]">
-			<a href=[[item.Href]]>
+			<a class="file" href=[[item.Href]]>
 				<paper-item>
 					<iron-icon icon="description"></iron-icon>
 					<paper-item-body>[[item.Name]]</paper-item-body>
