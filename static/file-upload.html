@@ -19,14 +19,18 @@
 			text-align: center;
 		}
 
+		#epubuploadform {
+			width: 100%;
+		}
+
 		#content {
 			@apply(--layout-horizontal);
 			@apply(--layout-center);
-      		@apply(--layout-center-justified);
 		}
 
 		#uploadbox {
 			display: flex;
+			@apply(--layout-center-justified);
 		}
 
 		paper-button {
@@ -38,11 +42,11 @@
 		paper-item {
 			@apply(--layout-horizontal);
 			@apply(--layout-center);
-      		@apply(--layout-center-justified);
+			@apply(--layout-center-justified);
 			border-top-style: solid;
 			border-bottom-style: solid;
 			border-width: 1px;
-			width: 600px;
+			width: 30%;
 			font-family: 'Roboto';
 			font-style: italic;
 			font-size: 20px;
@@ -112,7 +116,7 @@
 			},
 
 			gotoFileList: function() {
-				document.location = '/';
+				document.location = '/static/filelist.html';
 			}
 		});
 	</script>

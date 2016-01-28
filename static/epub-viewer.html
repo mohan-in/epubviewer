@@ -10,6 +10,8 @@
 <link rel="import" href="/static/bower_components/paper-radio-group/paper-radio-group.html">
 <link rel="import" href="/static/bower_components/paper-radio-button/paper-radio-button.html">
 <link rel="import" href="/static/bower_components/paper-slider/paper-slider.html">
+<link rel="import" href="/static/bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="/static/bower_components/iron-media-query/iron-media-query.html">
 
 <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
 
@@ -31,15 +33,18 @@
 	<template>
 		<paper-header-panel class="flex">
 			<paper-toolbar>
+				<paper-icon-button icon="arrow-back" on-click="prev"></paper-icon-button>
 				<paper-icon-button icon="file-upload" on-click="gotoFileUpload"></paper-icon-button>
 				<paper-icon-button icon="view-list" on-click="gotoFileList"></paper-icon-button>
 				<div class="title">Epub Reader</div>
 				<paper-icon-button icon="settings" on-click="openSettingsDialog"></paper-icon-button>
+				<paper-icon-button icon="arrow-forward" on-click="next"></paper-icon-button>
 			</paper-toolbar>
 
 			<iframe name="epubviewer" id="epubviewer" class="fit"></iframe>
 		</paper-header-panel>
 
+		<iron-media-query id="mobileQuery" query="(min-width: 600px)" query-matches></iron-media-query>
 
 		<paper-dialog id="dialog">
 			<h2 class="title">Settings</h2>
@@ -86,17 +91,21 @@
 				},
 				marginLeft: {
 					type: Number,
-					value: 100
+					value: 10
 				},
 				marginRight: {
 					type: Number,
-					value: 100
+					value: 10
 				}
 			},
 
 			ready: function() {
-				var that = this;
+				if(this.$.mobileQuery.queryMatches) {
+					this.marginLeft = 100;
+					this.marginRight = 100;
+				}
 
+				var that = this;
 				this.$.epubviewer.addEventListener('load', function() {
 					var y=(this.contentWindow || this.contentDocument);          
 
