@@ -4,9 +4,11 @@
 <link rel="import" href="/static/bower_components/paper-item/paper-item.html">
 <link rel="import" href="/static/bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="/static/bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="/static/bower_components/iron-media-query/iron-media-query.html">
 
 <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
 
+<link rel="import" href="/static/upload-dialog.html">
 <script src="/static/ajax.js"></script>
 
 <dom-module id="file-list">
@@ -31,8 +33,8 @@
 
 	<template>
 		<paper-toolbar>
-			<paper-icon-button icon="file-upload" on-click="gotoFileUpload"></paper-icon-button>
-			<div class="title">Epub Reader - File List</div>
+			<paper-icon-button icon="file-upload" on-click="openUploadDialog"></paper-icon-button>
+			<div class="title">Epub Reader</div>
 		</paper-toolbar>
 
 		<template is="dom-repeat" items="[[Files]]">
@@ -43,6 +45,8 @@
 				</paper-item>
 			</a>
 		</template>
+
+		<upload-dialog id="uploadDialog"></upload-dialog>
 	</template>
 
 	<script>
@@ -65,8 +69,8 @@
 				});
 			},
 
-			gotoFileUpload: function() {
-				document.location = '/';
+			openUploadDialog: function() {
+				this.$.uploadDialog.open();
 			}
 		});
 	</script>

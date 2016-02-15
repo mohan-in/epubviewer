@@ -1,0 +1,60 @@
+<link rel="import" href="/static/bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="/static/bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="/static/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/static/bower_components/iron-media-query/iron-media-query.html">
+
+<dom-module id="upload-dialog">
+	<template>
+		<paper-dialog id="uploadDialog">
+			<h2 class="title">Upload epub file</h2>
+				<paper-dialog-scrollable>
+					<form id="epubuploadform" action="/upload" method="POST" enctype='multipart/form-data' flex>
+						<input type="file" id="epubupload" name="epubupload"></input>
+					</form>	
+				</paper-dialog-scrollable>
+			<div class="buttons">
+				<paper-button dialog-dismiss>Cancel</paper-button>
+				<paper-button dialog-confirm autofocus on-click="submitForm">OK</paper-button>
+			</div>
+		</paper-dialog>
+
+		<iron-media-query id="mobileQuery" query="(min-width: 600px)" query-matches></iron-media-query>
+	</template>
+
+	<script>
+		Polymer({
+			ready: function() {
+				if(this.$.mobileQuery.queryMatches) {
+					this.$.epubupload.style.width = '500px';
+				}
+			},
+
+			open: function() {
+				this.$.uploadDialog.open();
+			},
+
+			submitForm: function() {
+				var container = this.$.container;
+				this.style.cursor = 'wait';
+				ajax({
+					method: 'POST',
+					url: '/upload',
+					data: {
+						epubupload: this.$.epubupload.files[0]
+					},
+					success: function(response) {
+						document.location = JSON.parse(response).Href;
+						container.style.cursor = 'auto';
+					},
+					error: function() {
+						console.log('unable to upload file');
+						container.style.cursor = 'auto';
+					}
+				});
+			},
+		});
+	</script>
+</dom-module>
+
+
+			

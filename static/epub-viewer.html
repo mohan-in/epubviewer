@@ -12,9 +12,10 @@
 <link rel="import" href="/static/bower_components/paper-slider/paper-slider.html">
 <link rel="import" href="/static/bower_components/iron-media-query/iron-media-query.html">
 
-<link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
 
 <script src="/static/ajax.js"></script>
+<link rel="import" href="/static/upload-dialog.html">
 
 <dom-module id="epub-viewer">
 
@@ -33,7 +34,7 @@
 		<paper-header-panel class="flex">
 			<paper-toolbar>
 				<paper-icon-button icon="arrow-back" on-click="prev"></paper-icon-button>
-				<paper-icon-button icon="file-upload" on-click="gotoFileUpload"></paper-icon-button>
+				<paper-icon-button icon="file-upload" on-click="openUploadDialog"></paper-icon-button>
 				<paper-icon-button icon="view-list" on-click="gotoFileList"></paper-icon-button>
 				<div class="title">Epub Reader</div>
 				<paper-icon-button icon="settings" on-click="openSettingsDialog"></paper-icon-button>
@@ -54,12 +55,12 @@
 						<paper-radio-button name="comic sans ms">Comic Sans</paper-radio-button>
 						<paper-radio-button name="Times New Roman">Times New Roman</paper-radio-button>
 					</paper-radio-group>		
-						<div>Font Size</div>
-						<paper-slider class="blue" value="{{fontSize}}" max="48" editable></paper-slider>
-						<div>Left Margin</div>
-						<paper-slider class="blue" value="{{marginLeft}}" max="100" editable></paper-slider>
-						<div>Right Margin</div>
-						<paper-slider class="blue" value="{{marginRight}}" max="100" editable></paper-slider>
+					<div>Font Size</div>
+					<paper-slider class="blue" value="{{fontSize}}" max="48" editable></paper-slider>
+					<div>Left Margin</div>
+					<paper-slider class="blue" value="{{marginLeft}}" max="100" editable></paper-slider>
+					<div>Right Margin</div>
+					<paper-slider class="blue" value="{{marginRight}}" max="100" editable></paper-slider>
 				</paper-dialog-scrollable>
 			<div class="buttons">
 				<paper-button dialog-dismiss>Cancel</paper-button>
@@ -67,6 +68,7 @@
 			</div>
 		</paper-dialog>	
 
+		<upload-dialog id="uploadDialog"></upload-dialog>
 	</template>
 
 	<script>
@@ -97,6 +99,7 @@
 					value: 10
 				}
 			},
+
 
 			ready: function() {
 				if(this.$.mobileQuery.queryMatches) {
@@ -191,13 +194,13 @@
 				x.style.marginRight = this.marginRight + 'px';
 			},
 
-			gotoFileList: function() {
-				document.location = '/static/filelist.html';
+			openUploadDialog: function() {
+				this.$.uploadDialog.open();
 			},
 
-			gotoFileUpload: function() {
+			gotoFileList: function() {
 				document.location = '/';
-			}
+			},
 		});
 	</script>
 
