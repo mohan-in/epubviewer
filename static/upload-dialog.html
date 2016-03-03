@@ -2,19 +2,32 @@
 <link rel="import" href="/static/bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
 <link rel="import" href="/static/bower_components/paper-button/paper-button.html">
 <link rel="import" href="/static/bower_components/iron-media-query/iron-media-query.html">
+<link rel="import" href="/static/bower_components/paper-spinner/paper-spinner.html">
 
 <dom-module id="upload-dialog">
+	<style>
+		#spinner {
+			position: absolute;
+			top:0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			margin: auto;
+		}
+	</style>
+
 	<template>
 		<paper-dialog id="uploadDialog">
 			<h2 class="title">Upload epub file</h2>
 				<paper-dialog-scrollable>
 					<form id="epubuploadform" action="/upload" method="POST" enctype='multipart/form-data' flex>
 						<input type="file" id="epubupload" name="epubupload"></input>
-					</form>	
+					</form>
 				</paper-dialog-scrollable>
 			<div class="buttons">
 				<paper-button dialog-dismiss>Cancel</paper-button>
-				<paper-button dialog-confirm autofocus on-click="submitForm">OK</paper-button>
+				<paper-button autofocus on-click="submitForm">OK</paper-button>
+				<paper-spinner id="spinner" alt="uploading..."></paper-spinner>
 			</div>
 		</paper-dialog>
 
@@ -34,8 +47,7 @@
 			},
 
 			submitForm: function() {
-				var container = this.$.container;
-				this.style.cursor = 'wait';
+				this.$.spinner.active = true;
 				ajax({
 					method: 'POST',
 					url: '/upload',
@@ -44,11 +56,9 @@
 					},
 					success: function(response) {
 						document.location = JSON.parse(response).Href;
-						container.style.cursor = 'auto';
 					},
 					error: function() {
 						console.log('unable to upload file');
-						container.style.cursor = 'auto';
 					}
 				});
 			},
