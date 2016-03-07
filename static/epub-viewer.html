@@ -12,8 +12,6 @@
 <link rel="import" href="/static/bower_components/paper-slider/paper-slider.html">
 <link rel="import" href="/static/bower_components/iron-media-query/iron-media-query.html">
 
-<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
-
 <script src="/static/ajax.js"></script>
 <link rel="import" href="/static/upload-dialog.html">
 
@@ -46,14 +44,14 @@
 
 		<iron-media-query id="mobileQuery" query="(min-width: 600px)" query-matches></iron-media-query>
 
-		<paper-dialog id="dialog">
+		<paper-dialog id="settingsDialog">
 			<h2 class="title">Settings</h2>
 				<paper-dialog-scrollable>
 					<div>Font</div>
 					<paper-radio-group selected="{{fontFamily}}">
 						<paper-radio-button name="Roboto">Roboto</paper-radio-button>
 						<paper-radio-button name="comic sans ms">Comic Sans</paper-radio-button>
-						<paper-radio-button name="Times New Roman">Times New Roman</paper-radio-button>
+						<paper-radio-button name="Verdana">Verdana</paper-radio-button>
 					</paper-radio-group>		
 					<div>Font Size</div>
 					<paper-slider class="blue" value="{{fontSize}}" max="48" editable></paper-slider>
@@ -64,7 +62,7 @@
 				</paper-dialog-scrollable>
 			<div class="buttons">
 				<paper-button dialog-dismiss>Cancel</paper-button>
-				<paper-button dialog-confirm autofocus on-click="changeSettings">OK</paper-button>
+				<paper-button autofocus on-click="changeSettings">OK</paper-button>
 			</div>
 		</paper-dialog>	
 
@@ -84,11 +82,11 @@
 				},
 				fontFamily: {
 					type: String,
-					value: 'comic sans ms'
+					value: 'Verdana'
 				},
 				fontSize: {
 					type: Number,
-					value: 18
+					value: 16
 				},
 				marginLeft: {
 					type: Number,
@@ -109,7 +107,7 @@
 
 				var that = this;
 				this.$.epubviewer.addEventListener('load', function() {
-					var y=(this.contentWindow || this.contentDocument);          
+					var y=(that.$.epubviewer.contentWindow || that.$.epubviewer.contentDocument);
 
 					y.addEventListener('keydown', function(e) {
 						var evnt = new CustomEvent("click", { 'detail': 'Page navigation event' });
@@ -125,9 +123,9 @@
 					x.style.fontSize = that.fontSize + 'px';
 					x.style.marginLeft = that.marginLeft + 'px';
 					x.style.marginRight = that.marginRight + 'px';
-				});
 
-				this.$.epubviewer.focus();
+					that.$.epubviewer.focus();
+				});
 			},
 
 			computeHref: function(filename, src) {
@@ -182,7 +180,7 @@
 			},
 
 			openSettingsDialog: function() {
-				this.$.dialog.open();
+				this.$.settingsDialog.open();
 			},
 
 			changeSettings: function() {
@@ -192,6 +190,7 @@
 				x.style.fontSize = this.fontSize + 'px';
 				x.style.marginLeft = this.marginLeft + 'px';
 				x.style.marginRight = this.marginRight + 'px';
+				this.$.settingsDialog.close();
 			},
 
 			openUploadDialog: function() {
